@@ -24,6 +24,9 @@ const treeContent = document.getElementById("treeContent")
 const themeToggle = document.getElementById("themeToggle")
 const themeIcon = document.getElementById("themeIcon")
 const themeText = document.getElementById("themeText")
+const codeBox = document.getElementById("codeBox");
+const codeLang = document.getElementById("codeLang");
+const copyCode = document.getElementById("copyCode");
 
 let stats = {
     comparisons: 0,
@@ -172,6 +175,1628 @@ const algorithmInfo = {
         description: "Bogo Sort shuffles the array until it happens to be sorted. It is not practical and should only be used on very small arrays."
     }
 }
+const algoCode = {
+    merge: {
+        python: `def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    return merge(left, right)
+
+
+def merge(left, right):
+    result = []
+    i = j = 0
+
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result`,
+        javascript: `function mergeSort(arr) {
+  if (arr.length <= 1) return arr;
+
+  const mid = Math.floor(arr.length / 2);
+  const left = mergeSort(arr.slice(0, mid));
+  const right = mergeSort(arr.slice(mid));
+  return merge(left, right);
+}
+
+function merge(left, right) {
+  const result = [];
+  let i = 0, j = 0;
+
+  while (i < left.length && j < right.length) {
+    if (left[i] <= right[j]) {
+      result.push(left[i++]);
+    } else {
+      result.push(right[j++]);
+    }
+  }
+
+  return result
+    .concat(left.slice(i))
+    .concat(right.slice(j));
+}`,
+        cpp: `#include <vector>
+using namespace std;
+
+void merge(vector<int>& a, int l, int m, int r) {
+    vector<int> left(a.begin() + l, a.begin() + m + 1);
+    vector<int> right(a.begin() + m + 1, a.begin() + r + 1);
+
+    int i = 0, j = 0, k = l;
+    while (i < (int)left.size() && j < (int)right.size()) {
+        if (left[i] <= right[j]) {
+            a[k++] = left[i++];
+        } else {
+            a[k++] = right[j++];
+        }
+    }
+    while (i < (int)left.size()) {
+        a[k++] = left[i++];
+    }
+    while (j < (int)right.size()) {
+        a[k++] = right[j++];
+    }
+}
+
+void mergeSort(vector<int>& a, int l, int r) {
+    if (l >= r) return;
+    int m = l + (r - l) / 2;
+    mergeSort(a, l, m);
+    mergeSort(a, m + 1, r);
+    merge(a, l, m, r);
+}`,
+        java: `void merge(int[] a, int l, int m, int r) {
+    int n1 = m - l + 1;
+    int n2 = r - m;
+
+    int[] left = new int[n1];
+    int[] right = new int[n2];
+
+    System.arraycopy(a, l, left, 0, n1);
+    System.arraycopy(a, m + 1, right, 0, n2);
+
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) {
+        if (left[i] <= right[j]) {
+            a[k++] = left[i++];
+        } else {
+            a[k++] = right[j++];
+        }
+    }
+    while (i < n1) {
+        a[k++] = left[i++];
+    }
+    while (j < n2) {
+        a[k++] = right[j++];
+    }
+}
+
+void mergeSort(int[] a, int l, int r) {
+    if (l >= r) return;
+    int m = l + (r - l) / 2;
+    mergeSort(a, l, m);
+    mergeSort(a, m + 1, r);
+    merge(a, l, m, r);
+}`
+    },
+
+    quick: {
+        python: `def quick_sort(arr, low=0, high=None):
+    if high is None:
+        high = len(arr) - 1
+
+    if low < high:
+        p = partition(arr, low, high)
+        quick_sort(arr, low, p - 1)
+        quick_sort(arr, p + 1, high)
+
+
+def partition(arr, low, high):
+    pivot = arr[high]
+    i = low
+
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            arr[i], arr[j] = arr[j], arr[i]
+            i += 1
+
+    arr[i], arr[high] = arr[high], arr[i]
+    return i`,
+        javascript: `function quickSort(arr, low = 0, high = arr.length - 1) {
+  if (low < high) {
+    const p = partition(arr, low, high);
+    quickSort(arr, low, p - 1);
+    quickSort(arr, p + 1, high);
+  }
+  return arr;
+}
+
+function partition(arr, low, high) {
+  const pivot = arr[high];
+  let i = low;
+
+  for (let j = low; j < high; j++) {
+    if (arr[j] <= pivot) {
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+      i++;
+    }
+  }
+  [arr[i], arr[high]] = [arr[high], arr[i]];
+  return i;
+}`,
+        cpp: `#include <vector>
+using namespace std;
+
+int partition(vector<int>& a, int low, int high) {
+    int pivot = a[high];
+    int i = low;
+
+    for (int j = low; j < high; ++j) {
+        if (a[j] <= pivot) {
+            swap(a[i], a[j]);
+            ++i;
+        }
+    }
+    swap(a[i], a[high]);
+    return i;
+}
+
+void quickSort(vector<int>& a, int low, int high) {
+    if (low < high) {
+        int p = partition(a, low, high);
+        quickSort(a, low, p - 1);
+        quickSort(a, p + 1, high);
+    }
+}`,
+        java: `int partition(int[] a, int low, int high) {
+    int pivot = a[high];
+    int i = low;
+
+    for (int j = low; j < high; j++) {
+        if (a[j] <= pivot) {
+            int tmp = a[i];
+            a[i] = a[j];
+            a[j] = tmp;
+            i++;
+        }
+    }
+
+    int tmp = a[i];
+    a[i] = a[high];
+    a[high] = tmp;
+
+    return i;
+}
+
+void quickSort(int[] a, int low, int high) {
+    if (low < high) {
+        int p = partition(a, low, high);
+        quickSort(a, low, p - 1);
+        quickSort(a, p + 1, high);
+    }
+}`
+    },
+
+    heap: {
+        python: `def heap_sort(arr):
+    n = len(arr)
+
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+
+    for i in range(n - 1, 0, -1):
+        arr[i], arr[0] = arr[0], arr[i]
+        heapify(arr, i, 0)
+
+
+def heapify(arr, n, i):
+    largest = i
+    l = 2 * i + 1
+    r = 2 * i + 2
+
+    if l < n and arr[l] > arr[largest]:
+        largest = l
+    if r < n and arr[r] > arr[largest]:
+        largest = r
+
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]
+        heapify(arr, n, largest)`,
+        javascript: `function heapSort(arr) {
+  const n = arr.length;
+
+  for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+    heapify(arr, n, i);
+  }
+
+  for (let i = n - 1; i > 0; i--) {
+    [arr[0], arr[i]] = [arr[i], arr[0]];
+    heapify(arr, i, 0);
+  }
+  return arr;
+}
+
+function heapify(arr, n, i) {
+  let largest = i;
+  const l = 2 * i + 1;
+  const r = 2 * i + 2;
+
+  if (l < n && arr[l] > arr[largest]) largest = l;
+  if (r < n && arr[r] > arr[largest]) largest = r;
+
+  if (largest !== i) {
+    [arr[i], arr[largest]] = [arr[largest], arr[i]];
+    heapify(arr, n, largest);
+  }
+}`,
+        cpp: `#include <vector>
+using namespace std;
+
+void heapify(vector<int>& a, int n, int i) {
+    int largest = i;
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+
+    if (l < n && a[l] > a[largest]) largest = l;
+    if (r < n && a[r] > a[largest]) largest = r;
+
+    if (largest != i) {
+        swap(a[i], a[largest]);
+        heapify(a, n, largest);
+    }
+}
+
+void heapSort(vector<int>& a) {
+    int n = (int)a.size();
+
+    for (int i = n / 2 - 1; i >= 0; --i) {
+        heapify(a, n, i);
+    }
+
+    for (int i = n - 1; i > 0; --i) {
+        swap(a[0], a[i]);
+        heapify(a, i, 0);
+    }
+}`,
+        java: `void heapify(int[] a, int n, int i) {
+    int largest = i;
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+
+    if (l < n && a[l] > a[largest]) largest = l;
+    if (r < n && a[r] > a[largest]) largest = r;
+
+    if (largest != i) {
+        int tmp = a[i];
+        a[i] = a[largest];
+        a[largest] = tmp;
+        heapify(a, n, largest);
+    }
+}
+
+void heapSort(int[] a) {
+    int n = a.length;
+
+    for (int i = n / 2 - 1; i >= 0; i--) {
+        heapify(a, n, i);
+    }
+    for (int i = n - 1; i > 0; i--) {
+        int tmp = a[0];
+        a[0] = a[i];
+        a[i] = tmp;
+        heapify(a, i, 0);
+    }
+}`
+    },
+
+    tim: {
+        // Simplified but full Timsort-style implementation
+        python: `RUN = 32
+
+
+def insertion_sort(arr, left, right):
+    for i in range(left + 1, right + 1):
+        key = arr[i]
+        j = i - 1
+        while j >= left and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+
+
+def merge(arr, l, m, r):
+    left = arr[l:m + 1]
+    right = arr[m + 1:r + 1]
+
+    i = j = 0
+    k = l
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            arr[k] = left[i]
+            i += 1
+        else:
+            arr[k] = right[j]
+            j += 1
+        k += 1
+
+    while i < len(left):
+        arr[k] = left[i]
+        i += 1
+        k += 1
+
+    while j < len(right):
+        arr[k] = right[j]
+        j += 1
+        k += 1
+
+
+def timsort(arr):
+    n = len(arr)
+
+    for i in range(0, n, RUN):
+        insertion_sort(arr, i, min(i + RUN - 1, n - 1))
+
+    size = RUN
+    while size < n:
+        for left in range(0, n, 2 * size):
+            mid = min(left + size - 1, n - 1)
+            right = min(left + 2 * size - 1, n - 1)
+            if mid < right:
+                merge(arr, left, mid, right)
+        size *= 2`,
+        javascript: `const RUN = 32;
+
+function insertionSortRun(arr, left, right) {
+  for (let i = left + 1; i <= right; i++) {
+    const key = arr[i];
+    let j = i - 1;
+    while (j >= left && arr[j] > key) {
+      arr[j + 1] = arr[j];
+      j--;
+    }
+    arr[j + 1] = key;
+  }
+}
+
+function mergeRuns(arr, l, m, r) {
+  const left = arr.slice(l, m + 1);
+  const right = arr.slice(m + 1, r + 1);
+
+  let i = 0, j = 0, k = l;
+
+  while (i < left.length && j < right.length) {
+    if (left[i] <= right[j]) {
+      arr[k++] = left[i++];
+    } else {
+      arr[k++] = right[j++];
+    }
+  }
+
+  while (i < left.length) arr[k++] = left[i++];
+  while (j < right.length) arr[k++] = right[j++];
+}
+
+function timSort(arr) {
+  const n = arr.length;
+
+  for (let i = 0; i < n; i += RUN) {
+    insertionSortRun(arr, i, Math.min(i + RUN - 1, n - 1));
+  }
+
+  for (let size = RUN; size < n; size *= 2) {
+    for (let left = 0; left < n; left += 2 * size) {
+      const mid = Math.min(left + size - 1, n - 1);
+      const right = Math.min(left + 2 * size - 1, n - 1);
+      if (mid < right) {
+        mergeRuns(arr, left, mid, right);
+      }
+    }
+  }
+  return arr;
+}`,
+        cpp: `#include <vector>
+using namespace std;
+
+const int RUN = 32;
+
+void insertionSortRun(vector<int>& a, int left, int right) {
+    for (int i = left + 1; i <= right; ++i) {
+        int key = a[i];
+        int j = i - 1;
+        while (j >= left && a[j] > key) {
+            a[j + 1] = a[j];
+            --j;
+        }
+        a[j + 1] = key;
+    }
+}
+
+void mergeRuns(vector<int>& a, int l, int m, int r) {
+    vector<int> left(a.begin() + l, a.begin() + m + 1);
+    vector<int> right(a.begin() + m + 1, a.begin() + r + 1);
+
+    int i = 0, j = 0, k = l;
+
+    while (i < (int)left.size() && j < (int)right.size()) {
+        if (left[i] <= right[j]) {
+            a[k++] = left[i++];
+        } else {
+            a[k++] = right[j++];
+        }
+    }
+    while (i < (int)left.size()) a[k++] = left[i++];
+    while (j < (int)right.size()) a[k++] = right[j++];
+}
+
+void timSort(vector<int>& a) {
+    int n = (int)a.size();
+
+    for (int i = 0; i < n; i += RUN) {
+        int right = min(i + RUN - 1, n - 1);
+        insertionSortRun(a, i, right);
+    }
+
+    for (int size = RUN; size < n; size *= 2) {
+        for (int left = 0; left < n; left += 2 * size) {
+            int mid = min(left + size - 1, n - 1);
+            int right = min(left + 2 * size - 1, n - 1);
+            if (mid < right) {
+                mergeRuns(a, left, mid, right);
+            }
+        }
+    }
+}`,
+        java: `class TimSort {
+    private static final int RUN = 32;
+
+    private static void insertionSortRun(int[] a, int left, int right) {
+        for (int i = left + 1; i <= right; i++) {
+            int key = a[i];
+            int j = i - 1;
+            while (j >= left && a[j] > key) {
+                a[j + 1] = a[j];
+                j--;
+            }
+            a[j + 1] = key;
+        }
+    }
+
+    private static void mergeRuns(int[] a, int l, int m, int r) {
+        int n1 = m - l + 1;
+        int n2 = r - m;
+
+        int[] left = new int[n1];
+        int[] right = new int[n2];
+
+        System.arraycopy(a, l, left, 0, n1);
+        System.arraycopy(a, m + 1, right, 0, n2);
+
+        int i = 0, j = 0, k = l;
+        while (i < n1 && j < n2) {
+            if (left[i] <= right[j]) {
+                a[k++] = left[i++];
+            } else {
+                a[k++] = right[j++];
+            }
+        }
+        while (i < n1) a[k++] = left[i++];
+        while (j < n2) a[k++] = right[j++];
+    }
+
+    public static void timSort(int[] a) {
+        int n = a.length;
+
+        for (int i = 0; i < n; i += RUN) {
+            int right = Math.min(i + RUN - 1, n - 1);
+            insertionSortRun(a, i, right);
+        }
+
+        for (int size = RUN; size < n; size *= 2) {
+            for (int left = 0; left < n; left += 2 * size) {
+                int mid = Math.min(left + size - 1, n - 1);
+                int right = Math.min(left + 2 * size - 1, n - 1);
+                if (mid < right) {
+                    mergeRuns(a, left, mid, right);
+                }
+            }
+        }
+    }
+}`
+    },
+
+    bubble: {
+        python: `def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]`,
+        javascript: `function bubbleSort(arr) {
+  const n = arr.length;
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n - i - 1; j++) {
+      if (arr[j] > arr[j + 1]) {
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+      }
+    }
+  }
+  return arr;
+}`,
+        cpp: `#include <vector>
+using namespace std;
+
+void bubbleSort(vector<int>& a) {
+    int n = (int)a.size();
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n - i - 1; ++j) {
+            if (a[j] > a[j + 1]) {
+                swap(a[j], a[j + 1]);
+            }
+        }
+    }
+}`,
+        java: `void bubbleSort(int[] a) {
+    int n = a.length;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (a[j] > a[j + 1]) {
+                int tmp = a[j];
+                a[j] = a[j + 1];
+                a[j + 1] = tmp;
+            }
+        }
+    }
+}`
+    },
+
+    insertion: {
+        python: `def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key`,
+        javascript: `function insertionSort(arr) {
+  for (let i = 1; i < arr.length; i++) {
+    const key = arr[i];
+    let j = i - 1;
+    while (j >= 0 && arr[j] > key) {
+      arr[j + 1] = arr[j];
+      j--;
+    }
+    arr[j + 1] = key;
+  }
+  return arr;
+}`,
+        cpp: `#include <vector>
+using namespace std;
+
+void insertionSort(vector<int>& a) {
+    for (int i = 1; i < (int)a.size(); ++i) {
+        int key = a[i];
+        int j = i - 1;
+        while (j >= 0 && a[j] > key) {
+            a[j + 1] = a[j];
+            --j;
+        }
+        a[j + 1] = key;
+    }
+}`,
+        java: `void insertionSort(int[] a) {
+    for (int i = 1; i < a.length; i++) {
+        int key = a[i];
+        int j = i - 1;
+        while (j >= 0 && a[j] > key) {
+            a[j + 1] = a[j];
+            j--;
+        }
+        a[j + 1] = key;
+    }
+}`
+    },
+
+    selection: {
+        python: `def selection_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        min_idx = i
+        for j in range(i + 1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        if min_idx != i:
+            arr[i], arr[min_idx] = arr[min_idx], arr[i]`,
+        javascript: `function selectionSort(arr) {
+  const n = arr.length;
+  for (let i = 0; i < n; i++) {
+    let minIdx = i;
+    for (let j = i + 1; j < n; j++) {
+      if (arr[j] < arr[minIdx]) minIdx = j;
+    }
+    if (minIdx !== i) {
+      [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
+    }
+  }
+  return arr;
+}`,
+        cpp: `#include <vector>
+using namespace std;
+
+void selectionSort(vector<int>& a) {
+    int n = (int)a.size();
+    for (int i = 0; i < n; ++i) {
+        int minIdx = i;
+        for (int j = i + 1; j < n; ++j) {
+            if (a[j] < a[minIdx]) {
+                minIdx = j;
+            }
+        }
+        if (minIdx != i) {
+            swap(a[i], a[minIdx]);
+        }
+    }
+}`,
+        java: `void selectionSort(int[] a) {
+    int n = a.length;
+    for (int i = 0; i < n; i++) {
+        int minIdx = i;
+        for (int j = i + 1; j < n; j++) {
+            if (a[j] < a[minIdx]) minIdx = j;
+        }
+        if (minIdx != i) {
+            int tmp = a[i];
+            a[i] = a[minIdx];
+            a[minIdx] = tmp;
+        }
+    }
+}`
+    },
+
+    cocktail: {
+        python: `def cocktail_sort(arr):
+    n = len(arr)
+    start = 0
+    end = n - 1
+    swapped = True
+
+    while swapped:
+        swapped = False
+        for i in range(start, end):
+            if arr[i] > arr[i + 1]:
+                arr[i], arr[i + 1] = arr[i + 1], arr[i]
+                swapped = True
+        if not swapped:
+            break
+        swapped = False
+        end -= 1
+        for i in range(end - 1, start - 1, -1):
+            if arr[i] > arr[i + 1]:
+                arr[i], arr[i + 1] = arr[i + 1], arr[i]
+                swapped = True
+        start += 1`,
+        javascript: `function cocktailSort(arr) {
+  let start = 0;
+  let end = arr.length - 1;
+  let swapped = true;
+
+  while (swapped) {
+    swapped = false;
+    for (let i = start; i < end; i++) {
+      if (arr[i] > arr[i + 1]) {
+        [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+        swapped = true;
+      }
+    }
+    if (!swapped) break;
+    swapped = false;
+    end--;
+    for (let i = end - 1; i >= start; i--) {
+      if (arr[i] > arr[i + 1]) {
+        [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+        swapped = true;
+      }
+    }
+    start++;
+  }
+  return arr;
+}`,
+        cpp: `#include <vector>
+using namespace std;
+
+void cocktailSort(vector<int>& a) {
+    bool swapped = true;
+    int start = 0;
+    int end = (int)a.size() - 1;
+
+    while (swapped) {
+        swapped = false;
+        for (int i = start; i < end; ++i) {
+            if (a[i] > a[i + 1]) {
+                swap(a[i], a[i + 1]);
+                swapped = true;
+            }
+        }
+        if (!swapped) break;
+        swapped = false;
+        --end;
+        for (int i = end - 1; i >= start; --i) {
+            if (a[i] > a[i + 1]) {
+                swap(a[i], a[i + 1]);
+                swapped = true;
+            }
+        }
+        ++start;
+    }
+}`,
+        java: `void cocktailSort(int[] a) {
+    boolean swapped = true;
+    int start = 0;
+    int end = a.length - 1;
+
+    while (swapped) {
+        swapped = false;
+        for (int i = start; i < end; i++) {
+            if (a[i] > a[i + 1]) {
+                int tmp = a[i];
+                a[i] = a[i + 1];
+                a[i + 1] = tmp;
+                swapped = true;
+            }
+        }
+        if (!swapped) break;
+        swapped = false;
+        end--;
+        for (int i = end - 1; i >= start; i--) {
+            if (a[i] > a[i + 1]) {
+                int tmp = a[i];
+                a[i] = a[i + 1];
+                a[i + 1] = tmp;
+                swapped = true;
+            }
+        }
+        start++;
+    }
+}`
+    },
+
+    shell: {
+        python: `def shell_sort(arr):
+    n = len(arr)
+    gap = n // 2
+
+    while gap > 0:
+        for i in range(gap, n):
+            temp = arr[i]
+            j = i
+            while j >= gap and arr[j - gap] > temp:
+                arr[j] = arr[j - gap]
+                j -= gap
+            arr[j] = temp
+        gap //= 2`,
+        javascript: `function shellSort(arr) {
+  const n = arr.length;
+  let gap = Math.floor(n / 2);
+
+  while (gap > 0) {
+    for (let i = gap; i < n; i++) {
+      const temp = arr[i];
+      let j = i;
+      while (j >= gap && arr[j - gap] > temp) {
+        arr[j] = arr[j - gap];
+        j -= gap;
+      }
+      arr[j] = temp;
+    }
+    gap = Math.floor(gap / 2);
+  }
+  return arr;
+}`,
+        cpp: `#include <vector>
+using namespace std;
+
+void shellSort(vector<int>& a) {
+    int n = (int)a.size();
+    int gap = n / 2;
+
+    while (gap > 0) {
+        for (int i = gap; i < n; ++i) {
+            int temp = a[i];
+            int j = i;
+            while (j >= gap && a[j - gap] > temp) {
+                a[j] = a[j - gap];
+                j -= gap;
+            }
+            a[j] = temp;
+        }
+        gap /= 2;
+    }
+}`,
+        java: `void shellSort(int[] a) {
+    int n = a.length;
+    int gap = n / 2;
+
+    while (gap > 0) {
+        for (int i = gap; i < n; i++) {
+            int temp = a[i];
+            int j = i;
+            while (j >= gap && a[j - gap] > temp) {
+                a[j] = a[j - gap];
+                j -= gap;
+            }
+            a[j] = temp;
+        }
+        gap /= 2;
+    }
+}`
+    },
+
+    counting: {
+        python: `def counting_sort(arr):
+    if not arr:
+        return arr
+
+    min_val = min(arr)
+    max_val = max(arr)
+    k = max_val - min_val + 1
+
+    count = [0] * k
+    output = [0] * len(arr)
+
+    for x in arr:
+        count[x - min_val] += 1
+
+    for i in range(1, k):
+        count[i] += count[i - 1]
+
+    for x in reversed(arr):
+        count[x - min_val] -= 1
+        output[count[x - min_val]] = x
+
+    for i in range(len(arr)):
+        arr[i] = output[i]`,
+        javascript: `function countingSort(arr) {
+  if (!arr.length) return arr;
+
+  const minVal = Math.min(...arr);
+  const maxVal = Math.max(...arr);
+  const range = maxVal - minVal + 1;
+
+  const count = new Array(range).fill(0);
+  const output = new Array(arr.length);
+
+  for (const x of arr) count[x - minVal]++;
+
+  for (let i = 1; i < range; i++) {
+    count[i] += count[i - 1];
+  }
+
+  for (let i = arr.length - 1; i >= 0; i--) {
+    const x = arr[i];
+    const idx = x - minVal;
+    count[idx]--;
+    output[count[idx]] = x;
+  }
+
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = output[i];
+  }
+  return arr;
+}`,
+        cpp: `#include <vector>
+#include <algorithm>
+using namespace std;
+
+void countingSort(vector<int>& a) {
+    if (a.empty()) return;
+
+    int minVal = *min_element(a.begin(), a.end());
+    int maxVal = *max_element(a.begin(), a.end());
+    int range = maxVal - minVal + 1;
+
+    vector<int> count(range, 0), output(a.size());
+
+    for (int x : a) count[x - minVal]++;
+
+    for (int i = 1; i < range; ++i) {
+        count[i] += count[i - 1];
+    }
+
+    for (int i = (int)a.size() - 1; i >= 0; --i) {
+        int idx = a[i] - minVal;
+        count[idx]--;
+        output[count[idx]] = a[i];
+    }
+
+    a = output;
+}`,
+        java: `void countingSort(int[] a) {
+    if (a.length == 0) return;
+
+    int minVal = a[0], maxVal = a[0];
+    for (int x : a) {
+        if (x < minVal) minVal = x;
+        if (x > maxVal) maxVal = x;
+    }
+    int range = maxVal - minVal + 1;
+
+    int[] count = new int[range];
+    int[] output = new int[a.length];
+
+    for (int x : a) count[x - minVal]++;
+
+    for (int i = 1; i < range; i++) {
+        count[i] += count[i - 1];
+    }
+
+    for (int i = a.length - 1; i >= 0; i--) {
+        int idx = a[i] - minVal;
+        count[idx]--;
+        output[count[idx]] = a[i];
+    }
+
+    System.arraycopy(output, 0, a, 0, a.length);
+}`
+    },
+
+    radix: {
+        python: `def counting_sort_by_digit(arr, exp):
+    n = len(arr)
+    output = [0] * n
+    count = [0] * 10
+
+    for x in arr:
+        index = x // exp
+        count[index % 10] += 1
+
+    for i in range(1, 10):
+        count[i] += count[i - 1]
+
+    for i in range(n - 1, -1, -1):
+        index = arr[i] // exp
+        digit = index % 10
+        count[digit] -= 1
+        output[count[digit]] = arr[i]
+
+    for i in range(n):
+        arr[i] = output[i]
+
+
+def radix_sort(arr):
+    if not arr:
+        return
+
+    max_val = max(arr)
+    exp = 1
+    while max_val // exp > 0:
+        counting_sort_by_digit(arr, exp)
+        exp *= 10`,
+        javascript: `function countingSortByDigit(arr, exp) {
+  const n = arr.length;
+  const output = new Array(n).fill(0);
+  const count = new Array(10).fill(0);
+
+  for (let i = 0; i < n; i++) {
+    const digit = Math.floor(arr[i] / exp) % 10;
+    count[digit]++;
+  }
+
+  for (let i = 1; i < 10; i++) {
+    count[i] += count[i - 1];
+  }
+
+  for (let i = n - 1; i >= 0; i--) {
+    const digit = Math.floor(arr[i] / exp) % 10;
+    count[digit]--;
+    output[count[digit]] = arr[i];
+  }
+
+  for (let i = 0; i < n; i++) {
+    arr[i] = output[i];
+  }
+}
+
+function radixSort(arr) {
+  if (!arr.length) return arr;
+
+  let maxVal = Math.max(...arr);
+  let exp = 1;
+
+  while (Math.floor(maxVal / exp) > 0) {
+    countingSortByDigit(arr, exp);
+    exp *= 10;
+  }
+  return arr;
+}`,
+        cpp: `#include <vector>
+#include <algorithm>
+using namespace std;
+
+void countingSortByDigit(vector<int>& a, int exp) {
+    int n = (int)a.size();
+    vector<int> output(n);
+    int count[10] = {0};
+
+    for (int i = 0; i < n; ++i) {
+        int digit = (a[i] / exp) % 10;
+        count[digit]++;
+    }
+
+    for (int i = 1; i < 10; ++i) {
+        count[i] += count[i - 1];
+    }
+
+    for (int i = n - 1; i >= 0; --i) {
+        int digit = (a[i] / exp) % 10;
+        count[digit]--;
+        output[count[digit]] = a[i];
+    }
+
+    a = output;
+}
+
+void radixSort(vector<int>& a) {
+    if (a.empty()) return;
+    int maxVal = *max_element(a.begin(), a.end());
+    for (int exp = 1; maxVal / exp > 0; exp *= 10) {
+        countingSortByDigit(a, exp);
+    }
+}`,
+        java: `void countingSortByDigit(int[] a, int exp) {
+    int n = a.length;
+    int[] output = new int[n];
+    int[] count = new int[10];
+
+    for (int value : a) {
+        int digit = (value / exp) % 10;
+        count[digit]++;
+    }
+
+    for (int i = 1; i < 10; i++) {
+        count[i] += count[i - 1];
+    }
+
+    for (int i = n - 1; i >= 0; i--) {
+        int digit = (a[i] / exp) % 10;
+        count[digit]--;
+        output[count[digit]] = a[i];
+    }
+
+    System.arraycopy(output, 0, a, 0, n);
+}
+
+void radixSort(int[] a) {
+    if (a.length == 0) return;
+
+    int maxVal = a[0];
+    for (int x : a) if (x > maxVal) maxVal = x;
+
+    for (int exp = 1; maxVal / exp > 0; exp *= 10) {
+        countingSortByDigit(a, exp);
+    }
+}`
+    },
+
+    bucket: {
+        python: `def bucket_sort(arr):
+    if not arr:
+        return
+
+    n = len(arr)
+    num_buckets = max(5, int(n ** 0.5))
+    buckets = [[] for _ in range(num_buckets)]
+
+    min_val, max_val = min(arr), max(arr)
+    if min_val == max_val:
+        return
+
+    range_val = max_val - min_val
+
+    for x in arr:
+        idx = int((x - min_val) / range_val * (num_buckets - 1))
+        buckets[idx].append(x)
+
+    idx = 0
+    for bucket in buckets:
+        bucket.sort()
+        for x in bucket:
+            arr[idx] = x
+            idx += 1`,
+        javascript: `function bucketSort(arr) {
+  if (!arr.length) return arr;
+
+  const n = arr.length;
+  const numBuckets = Math.max(5, Math.floor(Math.sqrt(n)));
+  const buckets = Array.from({ length: numBuckets }, () => []);
+
+  const minVal = Math.min(...arr);
+  const maxVal = Math.max(...arr);
+  if (minVal === maxVal) return arr;
+
+  const range = maxVal - minVal;
+
+  for (const x of arr) {
+    let idx = Math.floor(((x - minVal) / range) * (numBuckets - 1));
+    buckets[idx].push(x);
+  }
+
+  let index = 0;
+  for (const bucket of buckets) {
+    bucket.sort((a, b) => a - b);
+    for (const x of bucket) {
+      arr[index++] = x;
+    }
+  }
+  return arr;
+}`,
+        cpp: `#include <vector>
+#include <algorithm>
+using namespace std;
+
+void bucketSort(vector<int>& a) {
+    if (a.empty()) return;
+
+    int n = (int)a.size();
+    int numBuckets = max(5, (int)sqrt(n));
+
+    int minVal = *min_element(a.begin(), a.end());
+    int maxVal = *max_element(a.begin(), a.end());
+    if (minVal == maxVal) return;
+
+    double range = (double)(maxVal - minVal);
+    vector<vector<int>> buckets(numBuckets);
+
+    for (int x : a) {
+        int idx = (int)((x - minVal) / range * (numBuckets - 1));
+        buckets[idx].push_back(x);
+    }
+
+    int index = 0;
+    for (auto& bucket : buckets) {
+        sort(bucket.begin(), bucket.end());
+        for (int x : bucket) {
+            a[index++] = x;
+        }
+    }
+}`,
+        java: `void bucketSort(int[] a) {
+    if (a.length == 0) return;
+
+    int n = a.length;
+    int numBuckets = Math.max(5, (int)Math.sqrt(n));
+
+    int minVal = a[0], maxVal = a[0];
+    for (int x : a) {
+        if (x < minVal) minVal = x;
+        if (x > maxVal) maxVal = x;
+    }
+    if (minVal == maxVal) return;
+
+    double range = maxVal - minVal;
+    @SuppressWarnings("unchecked")
+    java.util.List<Integer>[] buckets = new java.util.List[numBuckets];
+    for (int i = 0; i < numBuckets; i++) {
+        buckets[i] = new java.util.ArrayList<>();
+    }
+
+    for (int x : a) {
+        int idx = (int)((x - minVal) / range * (numBuckets - 1));
+        buckets[idx].add(x);
+    }
+
+    int index = 0;
+    for (java.util.List<Integer> bucket : buckets) {
+        java.util.Collections.sort(bucket);
+        for (int x : bucket) {
+            a[index++] = x;
+        }
+    }
+}`
+    },
+
+    pigeonhole: {
+        python: `def pigeonhole_sort(arr):
+    if not arr:
+        return
+
+    min_val = min(arr)
+    max_val = max(arr)
+    size = max_val - min_val + 1
+
+    holes = [[] for _ in range(size)]
+
+    for x in arr:
+        holes[x - min_val].append(x)
+
+    idx = 0
+    for bucket in holes:
+        for x in bucket:
+            arr[idx] = x
+            idx += 1`,
+        javascript: `function pigeonholeSort(arr) {
+  if (!arr.length) return arr;
+
+  const minVal = Math.min(...arr);
+  const maxVal = Math.max(...arr);
+  const size = maxVal - minVal + 1;
+
+  const holes = Array.from({ length: size }, () => []);
+
+  for (const x of arr) {
+    holes[x - minVal].push(x);
+  }
+
+  let index = 0;
+  for (const bucket of holes) {
+    for (const x of bucket) {
+      arr[index++] = x;
+    }
+  }
+  return arr;
+}`,
+        cpp: `#include <vector>
+#include <algorithm>
+using namespace std;
+
+void pigeonholeSort(vector<int>& a) {
+    if (a.empty()) return;
+
+    int minVal = *min_element(a.begin(), a.end());
+    int maxVal = *max_element(a.begin(), a.end());
+    int size = maxVal - minVal + 1;
+
+    vector<vector<int>> holes(size);
+    for (int x : a) {
+        holes[x - minVal].push_back(x);
+    }
+
+    int index = 0;
+    for (auto& bucket : holes) {
+        for (int x : bucket) {
+            a[index++] = x;
+        }
+    }
+}`,
+        java: `void pigeonholeSort(int[] a) {
+    if (a.length == 0) return;
+
+    int minVal = a[0], maxVal = a[0];
+    for (int x : a) {
+        if (x < minVal) minVal = x;
+        if (x > maxVal) maxVal = x;
+    }
+    int size = maxVal - minVal + 1;
+
+    @SuppressWarnings("unchecked")
+    java.util.List<Integer>[] holes = new java.util.List[size];
+    for (int i = 0; i < size; i++) {
+        holes[i] = new java.util.ArrayList<>();
+    }
+
+    for (int x : a) {
+        holes[x - minVal].add(x);
+    }
+
+    int index = 0;
+    for (java.util.List<Integer> bucket : holes) {
+        for (int x : bucket) {
+            a[index++] = x;
+        }
+    }
+}`
+    },
+
+    flash: {
+        python: `def flash_sort(arr):
+    n = len(arr)
+    if n <= 1:
+        return
+
+    m = max(2, int(0.43 * n))
+    min_val = min(arr)
+    max_val = max(arr)
+    if min_val == max_val:
+        return
+
+    c1 = (m - 1) / (max_val - min_val)
+    L = [0] * m
+
+    for x in arr:
+        k = int(c1 * (x - min_val))
+        L[k] += 1
+
+    for i in range(1, m):
+        L[i] += L[i - 1]
+
+    arr[0], arr[arr.index(max_val)] = arr[arr.index(max_val)], arr[0]
+
+    move = 0
+    j = 0
+    k = m - 1
+
+    while move < n - 1:
+        while j > L[k] - 1:
+            j += 1
+            k = int(c1 * (arr[j] - min_val))
+        evicted = arr[j]
+        while j != L[k]:
+            k = int(c1 * (evicted - min_val))
+            dest = L[k] - 1
+            arr[dest], evicted = evicted, arr[dest]
+            L[k] -= 1
+            move += 1
+
+    for i in range(1, n):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key`,
+        javascript: `function flashSort(arr) {
+  const n = arr.length;
+  if (n <= 1) return arr;
+
+  let minVal = arr[0], maxVal = arr[0], maxIdx = 0;
+  for (let i = 1; i < n; i++) {
+    if (arr[i] < minVal) minVal = arr[i];
+    if (arr[i] > maxVal) {
+      maxVal = arr[i];
+      maxIdx = i;
+    }
+  }
+  if (minVal === maxVal) return arr;
+
+  let m = Math.max(2, Math.floor(0.43 * n));
+  const L = new Array(m).fill(0);
+  const c1 = (m - 1) / (maxVal - minVal);
+
+  for (let i = 0; i < n; i++) {
+    const k = Math.floor(c1 * (arr[i] - minVal));
+    L[k]++;
+  }
+
+  for (let i = 1; i < m; i++) {
+    L[i] += L[i - 1];
+  }
+
+  [arr[0], arr[maxIdx]] = [arr[maxIdx], arr[0]];
+
+  let move = 0;
+  let j = 0;
+  let k = m - 1;
+
+  while (move < n - 1) {
+    while (j > L[k] - 1) {
+      j++;
+      k = Math.floor(c1 * (arr[j] - minVal));
+    }
+    let evicted = arr[j];
+    while (j !== L[k]) {
+      k = Math.floor(c1 * (evicted - minVal));
+      const dest = L[k] - 1;
+      const temp = arr[dest];
+      arr[dest] = evicted;
+      evicted = temp;
+      L[k]--;
+      move++;
+    }
+  }
+
+  for (let i = 1; i < n; i++) {
+    const key = arr[i];
+    let j2 = i - 1;
+    while (j2 >= 0 && arr[j2] > key) {
+      arr[j2 + 1] = arr[j2];
+      j2--;
+    }
+    arr[j2 + 1] = key;
+  }
+  return arr;
+}`,
+        cpp: `#include <vector>
+#include <algorithm>
+using namespace std;
+
+void flashSort(vector<int>& a) {
+    int n = (int)a.size();
+    if (n <= 1) return;
+
+    int minVal = a[0], maxVal = a[0], maxIdx = 0;
+    for (int i = 1; i < n; ++i) {
+        if (a[i] < minVal) minVal = a[i];
+        if (a[i] > maxVal) {
+            maxVal = a[i];
+            maxIdx = i;
+        }
+    }
+    if (minVal == maxVal) return;
+
+    int m = max(2, (int)(0.43 * n));
+    vector<int> L(m, 0);
+    double c1 = (double)(m - 1) / (maxVal - minVal);
+
+    for (int i = 0; i < n; ++i) {
+        int k = (int)(c1 * (a[i] - minVal));
+        L[k]++;
+    }
+    for (int i = 1; i < m; ++i) {
+        L[i] += L[i - 1];
+    }
+
+    swap(a[0], a[maxIdx]);
+
+    int move = 0, j = 0, k = m - 1;
+    while (move < n - 1) {
+        while (j > L[k] - 1) {
+            j++;
+            k = (int)(c1 * (a[j] - minVal));
+        }
+        int evicted = a[j];
+        while (j != L[k]) {
+            k = (int)(c1 * (evicted - minVal));
+            int dest = L[k] - 1;
+            int temp = a[dest];
+            a[dest] = evicted;
+            evicted = temp;
+            L[k]--;
+            move++;
+        }
+    }
+
+    for (int i = 1; i < n; ++i) {
+        int key = a[i];
+        int j2 = i - 1;
+        while (j2 >= 0 && a[j2] > key) {
+            a[j2 + 1] = a[j2];
+            j2--;
+        }
+        a[j2 + 1] = key;
+    }
+}`,
+        java: `void flashSort(int[] a) {
+    int n = a.length;
+    if (n <= 1) return;
+
+    int minVal = a[0], maxVal = a[0], maxIdx = 0;
+    for (int i = 1; i < n; i++) {
+        if (a[i] < minVal) minVal = a[i];
+        if (a[i] > maxVal) {
+            maxVal = a[i];
+            maxIdx = i;
+        }
+    }
+    if (minVal == maxVal) return;
+
+    int m = Math.max(2, (int)(0.43 * n));
+    int[] L = new int[m];
+    double c1 = (double)(m - 1) / (maxVal - minVal);
+
+    for (int x : a) {
+        int k = (int)(c1 * (x - minVal));
+        L[k]++;
+    }
+    for (int i = 1; i < m; i++) {
+        L[i] += L[i - 1];
+    }
+
+    int tmp = a[0];
+    a[0] = a[maxIdx];
+    a[maxIdx] = tmp;
+
+    int move = 0;
+    int j = 0;
+    int k = m - 1;
+
+    while (move < n - 1) {
+        while (j > L[k] - 1) {
+            j++;
+            k = (int)(c1 * (a[j] - minVal));
+        }
+        int evicted = a[j];
+        while (j != L[k]) {
+            k = (int)(c1 * (evicted - minVal));
+            int dest = L[k] - 1;
+            int t = a[dest];
+            a[dest] = evicted;
+            evicted = t;
+            L[k]--;
+            move++;
+        }
+    }
+
+    for (int i = 1; i < n; i++) {
+        int key = a[i];
+        int j2 = i - 1;
+        while (j2 >= 0 && a[j2] > key) {
+            a[j2 + 1] = a[j2];
+            j2--;
+        }
+        a[j2 + 1] = key;
+    }
+}`
+    },
+
+    bogo: {
+        python: `import random
+
+
+def is_sorted(arr):
+    return all(arr[i] <= arr[i + 1] for i in range(len(arr) - 1))
+
+
+def bogo_sort(arr):
+    while not is_sorted(arr):
+        random.shuffle(arr)`,
+        javascript: `function isSorted(arr) {
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] < arr[i - 1]) return false;
+  }
+  return true;
+}
+
+function bogoSort(arr) {
+  while (!isSorted(arr)) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+  return arr;
+}`,
+        cpp: `#include <vector>
+#include <algorithm>
+#include <random>
+using namespace std;
+
+bool isSorted(const vector<int>& a) {
+    for (size_t i = 1; i < a.size(); ++i) {
+        if (a[i] < a[i - 1]) return false;
+    }
+    return true;
+}
+
+void bogoSort(vector<int>& a) {
+    static random_device rd;
+    static mt19937 gen(rd());
+
+    while (!isSorted(a)) {
+        shuffle(a.begin(), a.end(), gen);
+    }
+}`,
+        java: `boolean isSorted(int[] a) {
+    for (int i = 1; i < a.length; i++) {
+        if (a[i] < a[i - 1]) return false;
+    }
+    return true;
+}
+
+void bogoSort(int[] a) {
+    java.util.Random rand = new java.util.Random();
+    while (!isSorted(a)) {
+        for (int i = a.length - 1; i > 0; i--) {
+            int j = rand.nextInt(i + 1);
+            int tmp = a[i];
+            a[i] = a[j];
+            a[j] = tmp;
+        }
+    }
+}`
+    }
+};
+
 
 function getDelay() {
     const v = parseInt(speedSlider.value, 10)
@@ -952,6 +2577,48 @@ function applyTheme(theme) {
         localStorage.setItem("sorting-visualizer-theme", theme)
     } catch (e) {}
 }
+function normalizeIndentation(code) {
+    let lines = code.replace(/\t/g, "    ").split("\n");
+
+
+    while (lines.length && lines[0].trim() === "") lines.shift();
+    while (lines.length && lines[lines.length - 1].trim() === "") lines.pop();
+
+
+    let minIndent = Infinity;
+    for (let line of lines) {
+        if (!line.trim()) continue; 
+        const match = line.match(/^(\s*)/);
+        if (match) {
+            minIndent = Math.min(minIndent, match[1].length);
+        }
+    }
+
+    if (!isFinite(minIndent)) minIndent = 0;
+
+    return lines.map(line => line.slice(minIndent)).join("\n");
+}
+
+function updateCodeBox() {
+    const algo = algoSelect.value;
+    const lang = codeLang.value;
+
+    if (algoCode[algo] && algoCode[algo][lang]) {
+        let rawCode = algoCode[algo][lang];
+        rawCode = normalizeIndentation(rawCode);
+
+        codeBox.textContent = rawCode;
+
+        if (window.Prism) {
+            codeBox.className = "language-" + lang;
+            Prism.highlightElement(codeBox);
+        }
+    } else {
+        codeBox.textContent = "// Code coming soon for this language.";
+    }
+}
+
+
 
 function initTheme() {
     let stored = null
@@ -971,18 +2638,41 @@ function init() {
     updateAlgoLabel()
     updateInfoPanel()
     renderStats()
+    updateCodeBox();
     btnStop.disabled = true
     setStatus("Ready.")
 }
+codeLang.addEventListener("change", updateCodeBox);
+
+copyCode.addEventListener("click", () => {
+    navigator.clipboard.writeText(codeBox.textContent);
+    copyCode.textContent = "Copied!";
+    setTimeout(() => copyCode.textContent = "Copy", 900);
+});
 
 sizeSlider.addEventListener("input", () => {
     sizeValue.textContent = sizeSlider.value
     if (!isSorting) {
         generateArray()
         drawBars()
-        clearSortedClasses
+        clearSortedClasses()
     }
 })
+const expandBtn = document.getElementById("expandCode");
+const codeContainer = document.getElementById("codeContainer");
+
+expandBtn.addEventListener("click", () => {
+    const expanded = codeContainer.classList.toggle("expanded");
+
+    if (expanded) {
+        codeContainer.classList.remove("collapsed");
+        expandBtn.textContent = "Collapse ▲";
+    } else {
+        codeContainer.classList.add("collapsed");
+        expandBtn.textContent = "Expand ▼";
+    }
+});
+
 
 typeSelect.addEventListener("change", () => {
     if (!isSorting) {
@@ -996,10 +2686,14 @@ typeSelect.addEventListener("change", () => {
 
 algoSelect.addEventListener("change", () => {
     if (!isSorting) {
-        updateAlgoLabel()
-        updateInfoPanel()
+        updateAlgoLabel();
+        updateInfoPanel();
+        updateCodeBox();
     }
-})
+});
+
+codeLang.addEventListener("change", updateCodeBox);
+
 
 speedSlider.addEventListener("input", () => {
     updateSpeedLabel()

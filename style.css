@@ -6,44 +6,68 @@ html {
 html[data-theme="dark"] {
     --bg-main: #05070b;
     --bg-gradient: radial-gradient(circle at top, #191b2a 0, #05070b 55%);
+
     --card-bg: rgba(14, 17, 30, 0.9);
     --card-sub-bg: rgba(10, 12, 22, 0.96);
     --border-soft: rgba(255, 255, 255, 0.08);
+
     --accent: #7b5cff;
     --accent-soft: rgba(123, 92, 255, 0.3);
     --accent-2: #4fc3f7;
     --danger: #ff6b81;
+
     --text-main: #f7f7ff;
     --text-soft: #a5a7d1;
     --chip-bg: rgba(5, 7, 16, 0.9);
+
     --slider-track: rgba(255, 255, 255, 0.16);
+
     --bar-base-top: #d8d9e8;
     --bar-base-bottom: #7c8fe0;
     --bar-active-top: #ffffff;
     --bar-active-bottom: #9cb1ff;
     --bar-sorted-bottom: #9de2b4;
+
+
+    --surface-2: rgba(5, 7, 16, 0.9);
+    --code-bg: #1e1e1e;         
+    --code-border: #2d2d2d;
+    --code-text: #d4d4d4;
+    --code-scrollbar: #3c3c3c;
 }
 
 html[data-theme="light"] {
     --bg-main: #f3f4fb;
     --bg-gradient: radial-gradient(circle at top, #ffffff 0, #e6e8f5 55%);
+
     --card-bg: rgba(255, 255, 255, 0.9);
     --card-sub-bg: rgba(250, 251, 255, 0.98);
     --border-soft: rgba(0, 0, 0, 0.05);
+
     --accent: #4b6bff;
     --accent-soft: rgba(75, 107, 255, 0.25);
     --accent-2: #0d99ff;
     --danger: #e34d5c;
+
     --text-main: #151623;
     --text-soft: #646785;
     --chip-bg: rgba(240, 241, 250, 0.9);
+
     --slider-track: rgba(0, 0, 0, 0.12);
+
     --bar-base-top: #c5caef;
     --bar-base-bottom: #5c73d8;
     --bar-active-top: #ffffff;
     --bar-active-bottom: #7f9dff;
     --bar-sorted-bottom: #6bc793;
+
+    --surface-2: rgba(240, 241, 250, 0.96);
+    --code-bg: #f5f5f8;
+    --code-border: #d5d6de;
+    --code-text: #1f2430;
+    --code-scrollbar: #c0c1cc;
 }
+
 
 body {
     margin: 0;
@@ -95,6 +119,7 @@ body {
     gap: 16px;
     height: calc(100vh - 56px);
 }
+
 
 .top-nav {
     display: flex;
@@ -156,11 +181,11 @@ body {
     font-size: 10px;
 }
 
-.layout {
+.layout-3col {
     display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1.9fr);
+    grid-template-columns: 1.4fr 2fr 1.4fr; /* D: same as before */
     gap: 16px;
-    flex: 1;
+    height: 100%;
     min-height: 0;
 }
 
@@ -170,6 +195,38 @@ body {
     gap: 14px;
     overflow: hidden;
 }
+
+.panel-left,
+.panel-center,
+.panel-right {
+    min-width: 0;
+}
+
+
+pre[class*="language-"],
+pre {
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: var(--code-bg) !important;
+}
+
+
+#codeBox,
+pre code {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    text-indent: 0 !important;
+    white-space: pre !important;
+    tab-size: 4 !important;
+}
+
+/* avoid forced indentation by browser */
+code {
+    white-space: pre !important;
+}
+
 
 .card {
     background: var(--card-bg);
@@ -182,20 +239,17 @@ body {
     padding: 18px 20px;
 }
 
-.card-sub {
+.card-sub,
+.tree-box-right {
     background: var(--card-sub-bg);
     border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.06);
     padding: 10px 12px;
 }
 
-.panel-left {
-    min-width: 0;
-}
-
-.panel-right {
-    min-width: 0;
-}
+/* --------------------------------------------------
+   6. Typography / Small UI
+-------------------------------------------------- */
 
 .title {
     font-size: 22px;
@@ -208,6 +262,23 @@ body {
     color: var(--text-soft);
     margin-bottom: 6px;
 }
+
+.section-title {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.status-row {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-soft);
+    min-height: 16px;
+}
+
+/* --------------------------------------------------
+   7. Controls (sliders, selects, buttons)
+-------------------------------------------------- */
 
 .controls-grid {
     display: grid;
@@ -339,53 +410,9 @@ body {
     box-shadow: none;
 }
 
-.section-title {
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 4px;
-}
-
-.info-content {
-    font-size: 11px;
-    color: var(--text-soft);
-    line-height: 1.4;
-}
-
-.info-content div {
-    margin-bottom: 2px;
-}
-
-.info-content strong {
-    color: var(--text-main);
-}
-
-.tree-content {
-    font-size: 11px;
-    color: var(--text-soft);
-    max-height: 130px;
-    overflow-y: auto;
-    padding-right: 4px;
-}
-
-.tree-content div {
-    margin-bottom: 2px;
-}
-
-.tree-content::-webkit-scrollbar {
-    width: 5px;
-}
-
-.tree-content::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.16);
-    border-radius: 999px;
-}
-
-.status-row {
-    margin-top: 6px;
-    font-size: 11px;
-    color: var(--text-soft);
-    min-height: 16px;
-}
+/* --------------------------------------------------
+   8. Center Panel: Visualization
+-------------------------------------------------- */
 
 .panel-header {
     display: flex;
@@ -411,8 +438,14 @@ body {
     color: var(--text-soft);
 }
 
+.panel-center {
+    display: flex;
+    flex-direction: column;
+}
+
 .bars-container {
     flex: 1;
+    margin-top: 8px;
     border-radius: 18px;
     padding: 10px 8px;
     background:
@@ -431,7 +464,10 @@ body {
     border-radius: 4px;
     background: linear-gradient(180deg, var(--bar-base-top), var(--bar-base-bottom));
     transform-origin: bottom;
-    transition: height 0.05s linear, transform 0.08s ease-out, background 0.12s ease-out;
+    transition:
+        height 0.05s linear,
+        transform 0.08s ease-out,
+        background 0.12s ease-out;
 }
 
 .bar.active {
@@ -443,77 +479,186 @@ body {
     background: linear-gradient(180deg, var(--bar-active-top), var(--bar-sorted-bottom));
 }
 
-.footer {
-    display: flex;
-    justify-content: center;
-    margin-top: 4px;
-}
-.tree-box-right {
-    margin-bottom: 14px;
-    background: var(--card-sub-bg);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    padding: 10px 12px;
+/* --------------------------------------------------
+   9. Info / Stats content
+-------------------------------------------------- */
+
+.info-content {
+    font-size: 11px;
+    color: var(--text-soft);
+    line-height: 1.4;
 }
 
-.layout-3col {
-    display: grid;
-    grid-template-columns: 1.2fr 2fr 1fr;
-    gap: 16px;
-    height: 100%;
-    min-height: 0;
+.info-content div {
+    margin-bottom: 2px;
 }
 
+.info-content strong {
+    color: var(--text-main);
+}
+
+/* --------------------------------------------------
+   10. Operation Tree (Right Panel, top)
+-------------------------------------------------- */
 
 .panel-right {
     display: flex;
     flex-direction: column;
 }
 
-.tree-content-right {
-    flex: 1;
-    font-size: 11px;
-    color: var(--text-soft);
-    overflow-y: auto;
-    padding-right: 4px;
-    max-height: 100%;
-}
-
-.tree-content-right::-webkit-scrollbar {
-    width: 5px;
-}
-
-.tree-content-right::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.17);
-    border-radius: 999px;
-}
-
-
-.panel-center {
-    display: flex;
-    flex-direction: column;
-}
-
-.bars-container {
-    flex: 1;
-    margin-top: 8px;
-}
-
+.tree-textbox,
+.tree-content,
 .tree-content-right {
     font-size: 11px;
     color: var(--text-soft);
     max-height: 200px;
     overflow-y: auto;
-    padding-right: 4px;
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    font-family: "JetBrains Mono", monospace;
+    line-height: 1.4rem;
+    white-space: pre-wrap;
 }
 
-.tree-content-right::-webkit-scrollbar {
+/* scrollbars for tree + code areas */
+.tree-textbox::-webkit-scrollbar,
+.tree-content::-webkit-scrollbar,
+.tree-content-right::-webkit-scrollbar,
+.code-box::-webkit-scrollbar {
     width: 5px;
 }
 
-.tree-content-right::-webkit-scrollbar-thumb {
+.tree-textbox::-webkit-scrollbar-thumb,
+.tree-content::-webkit-scrollbar-thumb,
+.tree-content-right::-webkit-scrollbar-thumb,
+.code-box::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.16);
     border-radius: 999px;
+}
+
+/* legacy tree-content containers for safety */
+.tree-content div,
+.tree-content-right div {
+    margin-bottom: 2px;
+}
+
+/* --------------------------------------------------
+   11. Code Viewer (Right Panel, bottom)
+-------------------------------------------------- */
+
+.code-title {
+    margin-top: 1.2rem;
+}
+
+.code-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.7rem;
+    gap: 8px;
+}
+
+.code-top select {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-main);
+    font-size: 11px;
+}
+
+.copy-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: 0.16s ease;
+}
+
+.copy-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+    
+
+.code-container.collapsed {
+    max-height: 160px; /* preview height */
+}
+
+.code-container.expanded {
+    max-height: 120000px; 
+}
+
+
+
+.code-box {
+    background: var(--code-bg);
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 10px;
+    border: 1px solid var(--code-border);
+    overflow-y: auto;
+    font-size: 13px;
+    max-height: none;    
+}
+
+
+
+.code-box code {
+    font-family: "JetBrains Mono", "Fira Code", monospace;
+    font-size: 11px;       
+    line-height: 1.45;
+}
+.code-container.collapsed .code-box {
+    max-height: 160px;
+}
+
+.code-container.expanded .code-box {
+    max-height: 800px; 
+}
+
+
+
+.code-box .token.comment,
+.code-box .token.prolog,
+.code-box .token.doctype,
+.code-box .token.cdata {
+    color: #6a9955;
+}
+
+.code-box .token.keyword,
+.code-box .token.operator {
+    color: #c586c0;
+}
+
+.code-box .token.string {
+    color: #ce9178;
+}
+
+.code-box .token.function {
+    color: #dcdcaa;
+}
+
+.code-box .token.number {
+    color: #b5cea8;
+}
+
+/* custom scrollbar color for code (use variable per theme) */
+.code-box::-webkit-scrollbar-thumb {
+    background: var(--code-scrollbar);
+}
+
+/* --------------------------------------------------
+   12. Footer
+-------------------------------------------------- */
+
+.footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 4px;
 }
 
 .footer-link {
@@ -548,14 +693,20 @@ body {
     font-size: 11px;
 }
 
+/* --------------------------------------------------
+   13. Responsive
+-------------------------------------------------- */
+
 @media (max-width: 900px) {
-    .layout {
+    .layout-3col {
         grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: auto minmax(0, 1fr);
+        grid-template-rows: auto auto auto;
+        height: auto;
     }
 
     .app-shell {
         padding-inline: 14px;
+        height: auto;
     }
 }
 
@@ -567,5 +718,9 @@ body {
 
     .title {
         font-size: 20px;
+    }
+
+    .controls-grid {
+        grid-template-columns: minmax(0, 1fr);
     }
 }

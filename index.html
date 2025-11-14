@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-tomorrow.min.css">
+
+      <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-core.min.js" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-cpp.min.js" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-java.min.js" defer></script>
+      
     <meta charset="UTF-8" />
     <title>Sorting Visualizer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -131,12 +141,35 @@
             </section>
 
             <section class="panel panel-right card">
-                <h2 class="section-title">Operation Tree</h2>
-                <div id="treeContent" class="tree-content-right">
-                    No operations yet.
-                </div>
-            </section>
 
+                <div class="info-block card-sub">
+                    <h2 class="section-title">Operation Tree</h2>
+                    <div id="treeContent" class="tree-textbox">No operations yet.</div>
+                </div>
+        
+                <div class="info-block card-sub code-wrapper">
+                    <h2 class="section-title code-title">Algorithm Code</h2>
+                
+                    <div class="code-top">
+                        <select id="codeLang">
+                            <option value="python">Python</option>
+                            <option value="javascript" selected>JavaScript</option>
+                            <option value="cpp">C++</option>
+                            <option value="java">Java</option>
+                        </select>
+                
+                        <div class="code-buttons">
+                            <button id="copyCode" class="copy-btn">Copy</button>
+                            <button id="expandCode" class="expand-btn">Expand ▼</button>
+                        </div>
+                    </div>
+                    <div id="codeContainer" class="code-container collapsed">
+                        <pre class="code-box"><code id="codeBox">Select an algorithm…</code></pre>
+                    </div>
+                </div>                
+            </section>
+            
+            
         </main>
 
         <footer class="footer">
