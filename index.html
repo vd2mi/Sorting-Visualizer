@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8" />
+    <title>Sorting Visualizer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="background-layer"></div>
+    <div class="background-orb orb-1"></div>
+    <div class="background-orb orb-2"></div>
+
+    <div class="app-shell">
+
+
+        <header class="top-nav">
+            <div class="brand">
+                <div class="brand-mark"></div>
+                <div class="brand-text">Sorting Visualizer</div>
+            </div>
+
+            <div class="nav-right">
+                <button id="themeToggle" class="theme-toggle">
+                    <span id="themeIcon">●</span>
+                    <span id="themeText">Dark</span>
+                </button>
+            </div>
+        </header>
+
+
+        <main class="layout-3col">
+
+            <section class="panel panel-left card">
+                <h1 class="title">Control Panel</h1>
+                <p class="subtitle">Configure input, choose an algorithm, adjust visualization.</p>
+
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <label for="size">Array Size</label>
+                        <input type="range" id="size" min="5" max="200" value="60" />
+                        <div class="value-row">
+                            <span id="sizeValue">60</span>
+                            <span class="value-hint">elements</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="type">Input Pattern</label>
+                        <select id="type">
+                            <option value="best">Best case (sorted)</option>
+                            <option value="avg" selected>Average case (random)</option>
+                            <option value="worst">Worst case (reversed)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="algo">Algorithm</label>
+                        <select id="algo">
+                            <optgroup label="Comparison-based">
+                                <option value="merge" selected>Merge Sort</option>
+                                <option value="quick">Quick Sort</option>
+                                <option value="heap">Heap Sort</option>
+                                <option value="tim">Timsort</option>
+                                <option value="bubble">Bubble Sort</option>
+                                <option value="insertion">Insertion Sort</option>
+                                <option value="selection">Selection Sort</option>
+                                <option value="cocktail">Cocktail Sort</option>
+                                <option value="shell">Shell Sort</option>
+                            </optgroup>
+
+                            <optgroup label="Non-comparison">
+                                <option value="counting">Counting Sort</option>
+                                <option value="radix">Radix Sort</option>
+                                <option value="bucket">Bucket Sort</option>
+                                <option value="pigeonhole">Pigeonhole Sort</option>
+                                <option value="flash">Flash Sort</option>
+                            </optgroup>
+
+                            <optgroup label="Special">
+                                <option value="bogo">Bogo Sort (real)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="speed">Animation Speed</label>
+                        <input type="range" id="speed" min="1" max="80" value="25" />
+                        <div class="value-row">
+                            <span id="speedLabel">Medium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-row">
+                    <button id="btn-generate" class="btn ghost">Regenerate</button>
+                    <button id="btn-start" class="btn primary">Start</button>
+                    <button id="btn-stop" class="btn danger">Stop</button>
+                    <button id="btn-reset" class="btn outline">Reset</button>
+                </div>
+
+                <div class="info-block card-sub">
+                    <h2 class="section-title">Stats</h2>
+                    <div id="statsContent" class="info-content">
+                        No data yet.
+                    </div>
+                </div>
+
+                <div class="info-block card-sub">
+                    <h2 class="section-title">Algorithm Details</h2>
+                    <div id="infoContent" class="info-content">
+                        Select an algorithm to view details.
+                    </div>
+                </div>
+
+                <div class="status-row">
+                    <span id="statusLabel">Ready.</span>
+                </div>
+            </section>
+
+            <section class="panel panel-center card">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <h2>Visualization</h2>
+                        <span id="algoLabel" class="chip">Merge Sort • Average case</span>
+                    </div>
+                </div>
+
+                <div id="bars" class="bars-container"></div>
+            </section>
+
+            <section class="panel panel-right card">
+                <h2 class="section-title">Operation Tree</h2>
+                <div id="treeContent" class="tree-content-right">
+                    No operations yet.
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="footer">
+            <a href="https://github.com/vd2mi/Sorting-Visualizer" target="_blank" class="footer-link">
+                <span class="footer-label">GitHub</span>
+                <span class="footer-text">View source code</span>
+            </a>
+        </footer>
+
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
