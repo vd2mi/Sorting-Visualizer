@@ -183,7 +183,7 @@ body {
 
 .layout-3col {
     display: grid;
-    grid-template-columns: 1.4fr 2fr 1.4fr; /* D: same as before */
+    grid-template-columns: 1.4fr 2fr 1.4fr; 
     gap: 16px;
     height: 100%;
     min-height: 0;
@@ -222,7 +222,7 @@ pre code {
     tab-size: 4 !important;
 }
 
-/* avoid forced indentation by browser */
+
 code {
     white-space: pre !important;
 }
@@ -247,9 +247,7 @@ code {
     padding: 10px 12px;
 }
 
-/* --------------------------------------------------
-   6. Typography / Small UI
--------------------------------------------------- */
+
 
 .title {
     font-size: 22px;
@@ -276,9 +274,7 @@ code {
     min-height: 16px;
 }
 
-/* --------------------------------------------------
-   7. Controls (sliders, selects, buttons)
--------------------------------------------------- */
+
 
 .controls-grid {
     display: grid;
@@ -410,9 +406,7 @@ code {
     box-shadow: none;
 }
 
-/* --------------------------------------------------
-   8. Center Panel: Visualization
--------------------------------------------------- */
+
 
 .panel-header {
     display: flex;
@@ -479,9 +473,7 @@ code {
     background: linear-gradient(180deg, var(--bar-active-top), var(--bar-sorted-bottom));
 }
 
-/* --------------------------------------------------
-   9. Info / Stats content
--------------------------------------------------- */
+
 
 .info-content {
     font-size: 11px;
@@ -497,9 +489,7 @@ code {
     color: var(--text-main);
 }
 
-/* --------------------------------------------------
-   10. Operation Tree (Right Panel, top)
--------------------------------------------------- */
+
 
 .panel-right {
     display: flex;
@@ -521,7 +511,7 @@ code {
     white-space: pre-wrap;
 }
 
-/* scrollbars for tree + code areas */
+
 .tree-textbox::-webkit-scrollbar,
 .tree-content::-webkit-scrollbar,
 .tree-content-right::-webkit-scrollbar,
@@ -537,15 +527,13 @@ code {
     border-radius: 999px;
 }
 
-/* legacy tree-content containers for safety */
+
 .tree-content div,
 .tree-content-right div {
     margin-bottom: 2px;
 }
 
-/* --------------------------------------------------
-   11. Code Viewer (Right Panel, bottom)
--------------------------------------------------- */
+
 
 .code-title {
     margin-top: 1.2rem;
@@ -585,7 +573,7 @@ code {
     
 
 .code-container.collapsed {
-    max-height: 160px; /* preview height */
+    max-height: 160px; 
 }
 
 .code-container.expanded {
@@ -609,7 +597,7 @@ code {
 
 .code-box code {
     font-family: "JetBrains Mono", "Fira Code", monospace;
-    font-size: 11px;       
+    font-size: 12.8px;       
     line-height: 1.45;
 }
 .code-container.collapsed .code-box {
@@ -646,14 +634,11 @@ code {
     color: #b5cea8;
 }
 
-/* custom scrollbar color for code (use variable per theme) */
+
 .code-box::-webkit-scrollbar-thumb {
     background: var(--code-scrollbar);
 }
 
-/* --------------------------------------------------
-   12. Footer
--------------------------------------------------- */
 
 .footer {
     display: flex;
@@ -693,9 +678,6 @@ code {
     font-size: 11px;
 }
 
-/* --------------------------------------------------
-   13. Responsive
--------------------------------------------------- */
 
 @media (max-width: 900px) {
     .layout-3col {
