@@ -1,4 +1,3 @@
-```md
 # 📊 Sorting-Visualizer
 
 A modern, fully interactive **Sorting Algorithm Visualizer** built using **HTML**, **CSS**, and **JavaScript**.  
@@ -134,9 +133,9 @@ Your live link will appear in under a minute.
 
 ## 📸 Screenshot
 
-```md
+
 ![App Preview](DEMO.png)
-```
+
 
 Make sure `DEMO.png` exists in the repo root.
 
