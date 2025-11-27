@@ -10,7 +10,6 @@ Perfect for **learning, teaching, or showcasing algorithms**.
 ## 🚀 Live Demo
 
 🔗 **https://vd2mi.github.io/Sorting-Visualizer/**  
-(Automatically rebuilds whenever you push to `main`.)
 
 ---
 
