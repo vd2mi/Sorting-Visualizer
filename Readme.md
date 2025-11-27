@@ -136,9 +136,6 @@ Your live link will appear in under a minute.
 
 ![App Preview](DEMO.png)
 
-
-Make sure `DEMO.png` exists in the repo root.
-
 ---
 
 ## 🤝 Contributions
