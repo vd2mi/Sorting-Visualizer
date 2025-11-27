@@ -117,19 +117,6 @@ in your browser.
 
 ---
 
-## 🌐 Deploy to GitHub Pages (Free)
-
-1. Go to **Settings → Pages**
-2. Set:
-   - **Source:** Deploy from branch  
-   - **Branch:** `main`  
-   - **Folder:** `/ (root)`  
-3. Click **Save**
-
-Your live link will appear in under a minute.
-
----
-
 ## 📸 Screenshot
 
 
