@@ -1,4 +1,3 @@
-```md
 # 📊 Sorting-Visualizer
 
 A modern, fully interactive **Sorting Algorithm Visualizer** built using **HTML**, **CSS**, and **JavaScript**.  
@@ -11,7 +10,6 @@ Perfect for **learning, teaching, or showcasing algorithms**.
 ## 🚀 Live Demo
 
 🔗 **https://vd2mi.github.io/Sorting-Visualizer/**  
-(Automatically rebuilds whenever you push to `main`.)
 
 ---
 
@@ -119,26 +117,10 @@ in your browser.
 
 ---
 
-## 🌐 Deploy to GitHub Pages (Free)
-
-1. Go to **Settings → Pages**
-2. Set:
-   - **Source:** Deploy from branch  
-   - **Branch:** `main`  
-   - **Folder:** `/ (root)`  
-3. Click **Save**
-
-Your live link will appear in under a minute.
-
----
-
 ## 📸 Screenshot
 
-```md
-![App Preview](DEMO.png)
-```
 
-Make sure `DEMO.png` exists in the repo root.
+![App Preview](DEMO.png)
 
 ---
 
