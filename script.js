@@ -1988,6 +1988,9 @@ function drawBars() {
         return;
     }
     barsContainer.innerHTML = ""
+    // Set CSS variable for array size to help with bar width calculation
+    barsContainer.style.setProperty('--array-size', array.length);
+    
     for (const value of array) {
         const bar = document.createElement("div")
         bar.className = "bar"
