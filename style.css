@@ -692,6 +692,189 @@ code {
     }
 }
 
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    border-radius: 20px;
+    border: 1px solid var(--border-soft);
+    backdrop-filter: blur(24px) saturate(140%);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65);
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-main);
+    font-size: 28px;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: 0.16s ease;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-buttons .btn {
+    flex: 1;
+}
+
+/* Full Screen Comparison View */
+.compare-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-main);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.compare-fullscreen-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-soft);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.compare-fullscreen-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.compare-fullscreen-content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+    overflow: hidden;
+    min-height: 0;
+    min-width: 0;
+}
+
+.compare-panel-full {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    border: 1px solid var(--border-soft);
+    padding: 16px;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.compare-header-full {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.compare-header-full h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.compare-stats-full {
+    font-size: 12px;
+    color: var(--text-soft);
+    line-height: 1.5;
+}
+
+.compare-bars-full {
+    flex: 1;
+    min-height: 400px;
+    border-radius: 12px;
+    background: linear-gradient(150deg, rgba(5, 7, 16, 0.96), rgba(3, 4, 12, 0.98));
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    overflow-x: auto;
+    overflow-y: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 1px;
+    padding: 10px 4px;
+}
+
+.compare-bars-full .bar {
+    width: clamp(2px, calc((100% - 4px) / var(--array-size, 60) - 1px), 4px);
+    min-width: 2px;
+    flex-shrink: 0;
+    max-width: 4px;
+}
+
+@media (max-width: 1200px) {
+    .compare-fullscreen-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .compare-bars-full {
+        min-height: 300px;
+    }
+}
+
 @media (max-width: 600px) {
     .top-nav {
         flex-direction: row;

@@ -1,6 +1,14 @@
 let array = []
 let isSorting = false
 let isCancelled = false
+let isComparing = false
+let compareArrays = [[], [], []]
+let compareAlgos = ["", "", ""]
+let compareStats = [
+    { comparisons: 0, swaps: 0, passes: 0, bogoShuffles: 0, recursiveCalls: 0, startTime: 0, endTime: 0 },
+    { comparisons: 0, swaps: 0, passes: 0, bogoShuffles: 0, recursiveCalls: 0, startTime: 0, endTime: 0 },
+    { comparisons: 0, swaps: 0, passes: 0, bogoShuffles: 0, recursiveCalls: 0, startTime: 0, endTime: 0 }
+]
 
 const sizeSlider = document.getElementById("size")
 const sizeValue = document.getElementById("sizeValue")
@@ -27,6 +35,29 @@ const themeText = document.getElementById("themeText")
 const codeBox = document.getElementById("codeBox");
 const codeLang = document.getElementById("codeLang");
 const copyCode = document.getElementById("copyCode");
+const btnCompare = document.getElementById("btn-compare");
+const compareModal = document.getElementById("compareModal");
+const closeModal = document.getElementById("closeModal");
+const startCompare = document.getElementById("startCompare");
+const cancelCompare = document.getElementById("cancelCompare");
+const compareView = document.getElementById("compareView");
+const closeCompareView = document.getElementById("closeCompareView");
+const visualizationTitle = document.getElementById("visualizationTitle");
+const compareSize = document.getElementById("compareSize");
+const compareSizeValue = document.getElementById("compareSizeValue");
+const compareType = document.getElementById("compareType");
+const compareAlgo1Select = document.getElementById("compareAlgo1Select");
+const compareAlgo2Select = document.getElementById("compareAlgo2Select");
+const compareAlgo3Select = document.getElementById("compareAlgo3Select");
+const compareBars1 = document.getElementById("compareBars1");
+const compareBars2 = document.getElementById("compareBars2");
+const compareBars3 = document.getElementById("compareBars3");
+const compareAlgo1Label = document.getElementById("compareAlgo1");
+const compareAlgo2Label = document.getElementById("compareAlgo2");
+const compareAlgo3Label = document.getElementById("compareAlgo3");
+const compareStats1 = document.getElementById("compareStats1");
+const compareStats2 = document.getElementById("compareStats2");
+const compareStats3 = document.getElementById("compareStats3");
 
 let stats = {
     comparisons: 0,
@@ -1811,7 +1842,19 @@ function updateSpeedLabel() {
 }
 
 function getBars() {
+    if (isComparing) {
+        return null; // Use getCompareBars instead
+    }
+    if (!barsContainer) {
+        console.error("barsContainer is null in getBars()");
+        return null;
+    }
     return barsContainer.children
+}
+
+function getCompareBars(index) {
+    const containers = [compareBars1, compareBars2, compareBars3];
+    return containers[index]?.children || null;
 }
 
 function setStatus(text) {
@@ -1869,6 +1912,24 @@ function renderStats() {
         "<div><strong>Recursive calls:</strong> " + stats.recursiveCalls + "</div>"
 }
 
+function renderCompareStats(index) {
+    const stat = compareStats[index]
+    const size = compareArrays[index].length
+    const elapsed = stat.endTime > stat.startTime ? ((stat.endTime - stat.startTime) / 1000).toFixed(3) + " s" : "—"
+    const containers = [compareStats1, compareStats2, compareStats3]
+    
+    // Get algorithm info for details
+    const info = algorithmInfo[compareAlgos[index]] || {}
+    const details = info.name ? `<div style="margin-top: 4px; font-size: 9px; opacity: 0.8;"><strong>Best:</strong> ${info.best} | <strong>Worst:</strong> ${info.worst}</div>` : ""
+    
+    containers[index].innerHTML =
+        "<div><strong>Time:</strong> " + elapsed + "</div>" +
+        "<div><strong>Comparisons:</strong> " + stat.comparisons + "</div>" +
+        "<div><strong>Swaps:</strong> " + stat.swaps + "</div>" +
+        "<div><strong>Passes:</strong> " + stat.passes + "</div>" +
+        details
+}
+
 function clearTree() {
     treeContent.innerHTML = ""
 }
@@ -1900,7 +1961,32 @@ function generateArray() {
     }
 }
 
+function generateCompareArray(size, type) {
+    const minH = 24
+    const maxH = 360
+    const step = (maxH - minH) / Math.max(size - 1, 1)
+    const arr = []
+
+    if (type === "best") {
+        for (let i = 0; i < size; i++) arr.push(Math.round(minH + i * step))
+    } else if (type === "worst") {
+        for (let i = size - 1; i >= 0; i--) arr.push(Math.round(minH + i * step))
+    } else {
+        // For average case, we need to generate the same random array for all 3
+        // So we'll generate once and copy
+        for (let i = 0; i < size; i++) {
+            const h = minH + Math.random() * (maxH - minH)
+            arr.push(Math.round(h))
+        }
+    }
+    return arr
+}
+
 function drawBars() {
+    if (!barsContainer) {
+        console.error("barsContainer is null");
+        return;
+    }
     barsContainer.innerHTML = ""
     for (const value of array) {
         const bar = document.createElement("div")
@@ -1910,19 +1996,64 @@ function drawBars() {
     }
 }
 
+function drawCompareBars(index, arr) {
+    const containers = [compareBars1, compareBars2, compareBars3];
+    const container = containers[index];
+    if (!container) return;
+    
+    container.innerHTML = ""
+    // Set CSS variable for array size to help with bar width calculation
+    container.style.setProperty('--array-size', arr.length);
+    
+    for (const value of arr) {
+        const bar = document.createElement("div")
+        bar.className = "bar"
+        bar.style.height = value + "px"
+        container.appendChild(bar)
+    }
+}
+
 function clearSortedClasses() {
-    const bars = getBars()
-    for (let i = 0; i < bars.length; i++) {
-        bars[i].classList.remove("sorted")
-        bars[i].classList.remove("active")
+    if (isComparing) {
+        for (let idx = 0; idx < 3; idx++) {
+            const bars = getCompareBars(idx);
+            if (bars) {
+                for (let i = 0; i < bars.length; i++) {
+                    bars[i].classList.remove("sorted");
+                    bars[i].classList.remove("active");
+                }
+            }
+        }
+    } else {
+        const bars = getBars()
+        if (bars) {
+            for (let i = 0; i < bars.length; i++) {
+                bars[i].classList.remove("sorted")
+                bars[i].classList.remove("active")
+            }
+        }
     }
 }
 
 function markSorted() {
-    const bars = getBars()
-    for (let i = 0; i < bars.length; i++) {
-        bars[i].classList.remove("active")
-        bars[i].classList.add("sorted")
+    if (isComparing) {
+        for (let idx = 0; idx < 3; idx++) {
+            const bars = getCompareBars(idx);
+            if (bars) {
+                for (let i = 0; i < bars.length; i++) {
+                    bars[i].classList.remove("active");
+                    bars[i].classList.add("sorted");
+                }
+            }
+        }
+    } else {
+        const bars = getBars()
+        if (bars) {
+            for (let i = 0; i < bars.length; i++) {
+                bars[i].classList.remove("active")
+                bars[i].classList.add("sorted")
+            }
+        }
     }
 }
 
@@ -1930,31 +2061,49 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-async function highlight(indices, delayFactor) {
+async function highlight(indices, delayFactor, compareIndex = null) {
     if (isCancelled) return
-    const bars = getBars()
+    const bars = isComparing && compareIndex !== null ? getCompareBars(compareIndex) : getBars()
+    if (!bars) return
+    
     for (const idx of indices) {
         if (bars[idx]) bars[idx].classList.add("active")
     }
-    stats.comparisons += indices.length
-    renderStats()
+    
+    if (isComparing && compareIndex !== null) {
+        compareStats[compareIndex].comparisons += indices.length
+        renderCompareStats(compareIndex)
+    } else {
+        stats.comparisons += indices.length
+        renderStats()
+    }
+    
     await sleep(getDelay() * delayFactor)
     for (const idx of indices) {
         if (bars[idx]) bars[idx].classList.remove("active")
     }
 }
 
-async function swap(arr, i, j) {
+async function swap(arr, i, j, compareIndex = null) {
     if (isCancelled) return
-    const bars = getBars()
-    await highlight([i, j], 0.6)
+    const bars = isComparing && compareIndex !== null ? getCompareBars(compareIndex) : getBars()
+    if (!bars) return
+    
+    await highlight([i, j], 0.6, compareIndex)
     const temp = arr[i]
     arr[i] = arr[j]
     arr[j] = temp
     if (bars[i]) bars[i].style.height = arr[i] + "px"
     if (bars[j]) bars[j].style.height = arr[j] + "px"
-    stats.swaps++
-    renderStats()
+    
+    if (isComparing && compareIndex !== null) {
+        compareStats[compareIndex].swaps++
+        renderCompareStats(compareIndex)
+    } else {
+        stats.swaps++
+        renderStats()
+    }
+    
     await sleep(getDelay() * 0.5)
 }
 
@@ -2600,6 +2749,8 @@ function normalizeIndentation(code) {
 }
 
 function updateCodeBox() {
+    if (!codeBox) return;
+    
     const algo = algoSelect.value;
     const lang = codeLang.value;
 
@@ -2607,11 +2758,26 @@ function updateCodeBox() {
         let rawCode = algoCode[algo][lang];
         rawCode = normalizeIndentation(rawCode);
 
+        // Set text content first
         codeBox.textContent = rawCode;
+        codeBox.className = "language-" + lang;
 
+        // Try to highlight with Prism, but handle errors gracefully
         if (window.Prism) {
-            codeBox.className = "language-" + lang;
-            Prism.highlightElement(codeBox);
+            try {
+                // Check if Prism is fully initialized
+                if (typeof Prism.highlightElement === 'function' && Prism.languages && Prism.languages[lang]) {
+                    Prism.highlightElement(codeBox);
+                } else if (typeof Prism.highlight === 'function' && Prism.languages && Prism.languages[lang]) {
+                    // Fallback to Prism.highlight if highlightElement doesn't work
+                    const highlighted = Prism.highlight(rawCode, Prism.languages[lang], lang);
+                    codeBox.innerHTML = highlighted;
+                }
+            } catch (e) {
+                // Prism might not be fully loaded yet, or language component missing
+                // This is non-critical - code will still display, just without highlighting
+                // Silently fail to avoid console noise
+            }
         }
     } else {
         codeBox.textContent = "// Code coming soon for this language.";
@@ -2632,14 +2798,25 @@ function initTheme() {
 function init() {
     initTheme()
     sizeValue.textContent = sizeSlider.value
+    if (compareSizeValue && compareSize) compareSizeValue.textContent = compareSize.value
     updateSpeedLabel()
     generateArray()
     drawBars()
     updateAlgoLabel()
     updateInfoPanel()
     renderStats()
-    updateCodeBox();
+    // Wait for Prism to load before highlighting code
+    // Check if Prism is ready, if not wait a bit more
+    function tryUpdateCodeBox() {
+        if (window.Prism && window.Prism.languages) {
+            updateCodeBox();
+        } else {
+            setTimeout(tryUpdateCodeBox, 50);
+        }
+    }
+    tryUpdateCodeBox();
     btnStop.disabled = true
+    if (compareView) compareView.style.display = "none"
     setStatus("Ready.")
 }
 codeLang.addEventListener("change", updateCodeBox);
@@ -2714,14 +2891,19 @@ btnStart.addEventListener("click", () => {
 })
 
 btnStop.addEventListener("click", () => {
-    if (!isSorting) return
+    if (!isSorting && !isComparing) return
     isCancelled = true
     btnStop.disabled = true
     setStatus("Stopping...")
 })
 
 btnReset.addEventListener("click", () => {
-    if (isSorting) return
+    if (isSorting || isComparing) return
+    if (isComparing) {
+        // Exit comparison mode
+        if (compareView) compareView.style.display = "none"
+        isComparing = false
+    }
     generateArray()
     drawBars()
     clearSortedClasses()
@@ -2742,5 +2924,711 @@ window.addEventListener("resize", () => {
         clearSortedClasses()
     }
 })
+
+// Comparison Functions
+function resetCompareStats() {
+    for (let i = 0; i < 3; i++) {
+        compareStats[i] = {
+            comparisons: 0,
+            swaps: 0,
+            passes: 0,
+            bogoShuffles: 0,
+            recursiveCalls: 0,
+            startTime: 0,
+            endTime: 0
+        }
+    }
+}
+
+async function runCompareAlgorithm(algo, arr, index) {
+    compareStats[index].startTime = performance.now()
+    
+    // Create a context-aware version of swap and highlight
+    const originalSwap = swap
+    const originalHighlight = highlight
+    
+    // We'll need to modify the algorithms to accept compareIndex
+    // For now, let's create wrapper functions
+    try {
+        if (algo === "merge") {
+            await mergeSortCompare(arr, 0, arr.length - 1, index)
+        } else if (algo === "quick") {
+            await quickSortCompare(arr, 0, arr.length - 1, index)
+        } else if (algo === "heap") {
+            await heapSortCompare(arr, index)
+        } else if (algo === "tim") {
+            await timSortCompare(arr, index)
+        } else if (algo === "bubble") {
+            await bubbleSortCompare(arr, index)
+        } else if (algo === "insertion") {
+            await insertionSortCompare(arr, index)
+        } else if (algo === "selection") {
+            await selectionSortCompare(arr, index)
+        } else if (algo === "cocktail") {
+            await cocktailSortCompare(arr, index)
+        } else if (algo === "shell") {
+            await shellSortCompare(arr, index)
+        } else if (algo === "counting") {
+            await countingSortCompare(arr, index)
+        } else if (algo === "radix") {
+            await radixSortCompare(arr, index)
+        } else if (algo === "bucket") {
+            await bucketSortCompare(arr, index)
+        } else if (algo === "pigeonhole") {
+            await pigeonholeSortCompare(arr, index)
+        } else if (algo === "flash") {
+            await flashSortCompare(arr, index)
+        } else if (algo === "bogo") {
+            await bogoSortCompare(arr, index)
+        }
+        
+        compareStats[index].endTime = performance.now()
+        renderCompareStats(index)
+        
+        // Mark as sorted
+        const bars = getCompareBars(index)
+        if (bars) {
+            for (let i = 0; i < bars.length; i++) {
+                bars[i].classList.remove("active")
+                bars[i].classList.add("sorted")
+            }
+        }
+    } catch (e) {
+        console.error("Error in compare algorithm:", e)
+    }
+}
+
+// Wrapper functions for comparison mode
+async function mergeSortCompare(arr, left, right, compareIndex) {
+    if (isCancelled) return
+    if (left >= right) return
+    const mid = Math.floor((left + right) / 2)
+    compareStats[compareIndex].recursiveCalls++
+    renderCompareStats(compareIndex)
+    await mergeSortCompare(arr, left, mid, compareIndex)
+    await mergeSortCompare(arr, mid + 1, right, compareIndex)
+    await mergeCompare(arr, left, mid, right, compareIndex)
+}
+
+async function mergeCompare(arr, left, mid, right, compareIndex) {
+    if (isCancelled) return
+    const bars = getCompareBars(compareIndex)
+    const leftArr = arr.slice(left, mid + 1)
+    const rightArr = arr.slice(mid + 1, right + 1)
+    let i = 0, j = 0, k = left
+    
+    while (i < leftArr.length && j < rightArr.length) {
+        if (isCancelled) return
+        await highlight([k], 0.4, compareIndex)
+        if (leftArr[i] <= rightArr[j]) {
+            arr[k] = leftArr[i++]
+        } else {
+            arr[k] = rightArr[j++]
+        }
+        if (bars && bars[k]) bars[k].style.height = arr[k] + "px"
+        k++
+        await sleep(getDelay() * 0.35)
+    }
+    while (i < leftArr.length) {
+        if (isCancelled) return
+        await highlight([k], 0.35, compareIndex)
+        arr[k] = leftArr[i++]
+        if (bars && bars[k]) bars[k].style.height = arr[k] + "px"
+        k++
+        await sleep(getDelay() * 0.3)
+    }
+    while (j < rightArr.length) {
+        if (isCancelled) return
+        await highlight([k], 0.35, compareIndex)
+        arr[k] = rightArr[j++]
+        if (bars && bars[k]) bars[k].style.height = arr[k] + "px"
+        k++
+        await sleep(getDelay() * 0.3)
+    }
+}
+
+async function quickSortCompare(arr, low, high, compareIndex) {
+    if (isCancelled) return
+    if (low < high) {
+        compareStats[compareIndex].recursiveCalls++
+        renderCompareStats(compareIndex)
+        const pi = await partitionCompare(arr, low, high, compareIndex)
+        await quickSortCompare(arr, low, pi - 1, compareIndex)
+        await quickSortCompare(arr, pi + 1, high, compareIndex)
+    }
+}
+
+async function partitionCompare(arr, low, high, compareIndex) {
+    const bars = getCompareBars(compareIndex)
+    const pivot = arr[high]
+    let i = low
+    for (let j = low; j < high; j++) {
+        if (isCancelled) return i
+        await highlight([j, high], 0.4, compareIndex)
+        if (arr[j] < pivot) {
+            await swap(arr, i, j, compareIndex)
+            i++
+        }
+    }
+    await swap(arr, i, high, compareIndex)
+    return i
+}
+
+async function heapSortCompare(arr, compareIndex) {
+    const n = arr.length
+    for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+        if (isCancelled) return
+        await heapifyCompare(arr, n, i, compareIndex)
+    }
+    for (let i = n - 1; i > 0; i--) {
+        if (isCancelled) return
+        await swap(arr, 0, i, compareIndex)
+        await heapifyCompare(arr, i, 0, compareIndex)
+    }
+}
+
+async function heapifyCompare(arr, n, i, compareIndex) {
+    if (isCancelled) return
+    let largest = i
+    const l = 2 * i + 1
+    const r = 2 * i + 2
+    if (l < n && arr[l] > arr[largest]) largest = l
+    if (r < n && arr[r] > arr[largest]) largest = r
+    if (largest !== i) {
+        await swap(arr, i, largest, compareIndex)
+        await heapifyCompare(arr, n, largest, compareIndex)
+    }
+}
+
+async function bubbleSortCompare(arr, compareIndex) {
+    const n = arr.length
+    for (let i = 0; i < n; i++) {
+        if (isCancelled) return
+        for (let j = 0; j < n - i - 1; j++) {
+            if (isCancelled) return
+            await highlight([j, j + 1], 0.4, compareIndex)
+            if (arr[j] > arr[j + 1]) {
+                await swap(arr, j, j + 1, compareIndex)
+            }
+        }
+    }
+}
+
+async function insertionSortCompare(arr, compareIndex) {
+    const bars = getCompareBars(compareIndex)
+    const n = arr.length
+    for (let i = 1; i < n; i++) {
+        if (isCancelled) return
+        const key = arr[i]
+        let j = i - 1
+        while (j >= 0 && arr[j] > key) {
+            if (isCancelled) return
+            await highlight([j, j + 1], 0.4, compareIndex)
+            arr[j + 1] = arr[j]
+            if (bars && bars[j + 1]) bars[j + 1].style.height = arr[j + 1] + "px"
+            j--
+            compareStats[compareIndex].swaps++
+            renderCompareStats(compareIndex)
+            await sleep(getDelay() * 0.3)
+        }
+        arr[j + 1] = key
+        if (bars && bars[j + 1]) bars[j + 1].style.height = key + "px"
+        await sleep(getDelay() * 0.3)
+    }
+}
+
+async function selectionSortCompare(arr, compareIndex) {
+    const n = arr.length
+    for (let i = 0; i < n; i++) {
+        if (isCancelled) return
+        let minIdx = i
+        for (let j = i + 1; j < n; j++) {
+            if (isCancelled) return
+            await highlight([minIdx, j], 0.3, compareIndex)
+            if (arr[j] < arr[minIdx]) {
+                minIdx = j
+            }
+        }
+        if (minIdx !== i) {
+            await swap(arr, i, minIdx, compareIndex)
+        }
+    }
+}
+
+async function timSortCompare(arr, compareIndex) {
+    const n = arr.length
+    const RUN = 32
+    for (let i = 0; i < n; i += RUN) {
+        if (isCancelled) return
+        await insertionRunCompare(arr, i, Math.min(i + RUN - 1, n - 1), compareIndex)
+    }
+    for (let size = RUN; size < n; size *= 2) {
+        if (isCancelled) return
+        for (let left = 0; left < n; left += 2 * size) {
+            if (isCancelled) return
+            const mid = Math.min(left + size - 1, n - 1)
+            const right = Math.min(left + 2 * size - 1, n - 1)
+            if (mid < right) {
+                await mergeCompare(arr, left, mid, right, compareIndex)
+            }
+        }
+    }
+}
+
+async function insertionRunCompare(arr, left, right, compareIndex) {
+    const bars = getCompareBars(compareIndex)
+    for (let i = left + 1; i <= right; i++) {
+        if (isCancelled) return
+        const key = arr[i]
+        let j = i - 1
+        while (j >= left && arr[j] > key) {
+            if (isCancelled) return
+            await highlight([j, j + 1], 0.4, compareIndex)
+            arr[j + 1] = arr[j]
+            if (bars && bars[j + 1]) bars[j + 1].style.height = arr[j + 1] + "px"
+            j--
+            compareStats[compareIndex].swaps++
+            renderCompareStats(compareIndex)
+            await sleep(getDelay() * 0.3)
+        }
+        arr[j + 1] = key
+        if (bars && bars[j + 1]) bars[j + 1].style.height = key + "px"
+        await sleep(getDelay() * 0.3)
+    }
+}
+
+async function cocktailSortCompare(arr, compareIndex) {
+    let start = 0
+    let end = arr.length - 1
+    let swapped = true
+    while (swapped) {
+        if (isCancelled) return
+        swapped = false
+        for (let i = start; i < end; i++) {
+            if (isCancelled) return
+            await highlight([i, i + 1], 0.4, compareIndex)
+            if (arr[i] > arr[i + 1]) {
+                await swap(arr, i, i + 1, compareIndex)
+                swapped = true
+            }
+        }
+        if (!swapped) break
+        swapped = false
+        end--
+        for (let i = end; i > start; i--) {
+            if (isCancelled) return
+            await highlight([i - 1, i], 0.4, compareIndex)
+            if (arr[i - 1] > arr[i]) {
+                await swap(arr, i - 1, i, compareIndex)
+                swapped = true
+            }
+        }
+        start++
+    }
+}
+
+async function shellSortCompare(arr, compareIndex) {
+    const n = arr.length
+    const bars = getCompareBars(compareIndex)
+    let gap = Math.floor(n / 2)
+    while (gap > 0) {
+        for (let i = gap; i < n; i++) {
+            if (isCancelled) return
+            const temp = arr[i]
+            let j = i
+            while (j >= gap && arr[j - gap] > temp) {
+                if (isCancelled) return
+                await highlight([j, j - gap], 0.4, compareIndex)
+                arr[j] = arr[j - gap]
+                if (bars && bars[j]) bars[j].style.height = arr[j] + "px"
+                j -= gap
+                compareStats[compareIndex].swaps++
+                renderCompareStats(compareIndex)
+                await sleep(getDelay() * 0.3)
+            }
+            arr[j] = temp
+            if (bars && bars[j]) bars[j].style.height = temp + "px"
+        }
+        gap = Math.floor(gap / 2)
+    }
+}
+
+async function countingSortCompare(arr, compareIndex) {
+    let minVal = Math.min(...arr)
+    let maxVal = Math.max(...arr)
+    const range = maxVal - minVal + 1
+    const count = new Array(range).fill(0)
+    const output = new Array(arr.length)
+    for (let i = 0; i < arr.length; i++) {
+        count[arr[i] - minVal]++
+    }
+    for (let i = 1; i < range; i++) {
+        count[i] += count[i - 1]
+    }
+    for (let i = arr.length - 1; i >= 0; i--) {
+        output[--count[arr[i] - minVal]] = arr[i]
+    }
+    const bars = getCompareBars(compareIndex)
+    compareStats[compareIndex].passes++
+    renderCompareStats(compareIndex)
+    for (let i = 0; i < arr.length; i++) {
+        if (isCancelled) return
+        arr[i] = output[i]
+        if (bars && bars[i]) bars[i].style.height = arr[i] + "px"
+        await highlight([i], 0.2, compareIndex)
+        await sleep(getDelay() * 0.2)
+    }
+}
+
+async function radixSortCompare(arr, compareIndex) {
+    let maxVal = Math.max(...arr)
+    let exp = 1
+    while (Math.floor(maxVal / exp) > 0) {
+        if (isCancelled) return
+        await countingSortByDigitCompare(arr, exp, compareIndex)
+        exp *= 10
+    }
+}
+
+async function countingSortByDigitCompare(arr, exp, compareIndex) {
+    const n = arr.length
+    const output = new Array(n).fill(0)
+    const count = new Array(10).fill(0)
+    for (let i = 0; i < n; i++) {
+        const digit = Math.floor(arr[i] / exp) % 10
+        count[digit]++
+    }
+    for (let i = 1; i < 10; i++) {
+        count[i] += count[i - 1]
+    }
+    for (let i = n - 1; i >= 0; i--) {
+        const digit = Math.floor(arr[i] / exp) % 10
+        output[count[digit] - 1] = arr[i]
+        count[digit]--
+    }
+    const bars = getCompareBars(compareIndex)
+    compareStats[compareIndex].passes++
+    renderCompareStats(compareIndex)
+    for (let i = 0; i < n; i++) {
+        if (isCancelled) return
+        arr[i] = output[i]
+        if (bars && bars[i]) bars[i].style.height = arr[i] + "px"
+        await highlight([i], 0.2, compareIndex)
+        await sleep(getDelay() * 0.2)
+    }
+}
+
+async function bucketSortCompare(arr, compareIndex) {
+    const n = arr.length
+    const maxVal = Math.max(...arr)
+    const minVal = Math.min(...arr)
+    const range = maxVal - minVal || 1
+    const bucketCount = Math.max(5, Math.floor(Math.sqrt(n)))
+    const buckets = new Array(bucketCount).fill(0).map(() => [])
+    for (let i = 0; i < n; i++) {
+        const normalized = (arr[i] - minVal) / range
+        let idx = Math.floor(normalized * bucketCount)
+        if (idx === bucketCount) idx = bucketCount - 1
+        buckets[idx].push(arr[i])
+    }
+    const bars = getCompareBars(compareIndex)
+    compareStats[compareIndex].passes++
+    renderCompareStats(compareIndex)
+    for (let b = 0; b < bucketCount; b++) {
+        for (let i = 1; i < buckets[b].length; i++) {
+            const key = buckets[b][i]
+            let j = i - 1
+            while (j >= 0 && buckets[b][j] > key) {
+                buckets[b][j + 1] = buckets[b][j]
+                j--
+            }
+            buckets[b][j + 1] = key
+        }
+    }
+    let index = 0
+    for (let b = 0; b < bucketCount; b++) {
+        for (let i = 0; i < buckets[b].length; i++) {
+            if (isCancelled) return
+            arr[index] = buckets[b][i]
+            if (bars && bars[index]) bars[index].style.height = arr[index] + "px"
+            await highlight([index], 0.2, compareIndex)
+            await sleep(getDelay() * 0.2)
+            index++
+        }
+    }
+}
+
+async function pigeonholeSortCompare(arr, compareIndex) {
+    let minVal = Math.min(...arr)
+    let maxVal = Math.max(...arr)
+    const range = maxVal - minVal + 1
+    const holes = new Array(range).fill(0).map(() => [])
+    for (let i = 0; i < arr.length; i++) {
+        holes[arr[i] - minVal].push(arr[i])
+    }
+    const bars = getCompareBars(compareIndex)
+    compareStats[compareIndex].passes++
+    renderCompareStats(compareIndex)
+    let index = 0
+    for (let i = 0; i < range; i++) {
+        for (let j = 0; j < holes[i].length; j++) {
+            if (isCancelled) return
+            arr[index] = holes[i][j]
+            if (bars && bars[index]) bars[index].style.height = arr[index] + "px"
+            await highlight([index], 0.2, compareIndex)
+            await sleep(getDelay() * 0.2)
+            index++
+        }
+    }
+}
+
+async function flashSortCompare(arr, compareIndex) {
+    const n = arr.length
+    if (n <= 1) return
+    let minVal = arr[0], maxVal = arr[0], maxIdx = 0
+    for (let i = 1; i < n; i++) {
+        if (arr[i] < minVal) minVal = arr[i]
+        if (arr[i] > maxVal) {
+            maxVal = arr[i]
+            maxIdx = i
+        }
+    }
+    if (minVal === maxVal) return
+    let m = Math.floor(0.43 * n)
+    if (m < 2) m = 2
+    const L = new Array(m).fill(0)
+    const c1 = (m - 1) / (maxVal - minVal)
+    for (let i = 0; i < n; i++) {
+        const k = Math.floor(c1 * (arr[i] - minVal))
+        L[k]++
+    }
+    for (let k = 1; k < m; k++) {
+        L[k] += L[k - 1]
+    }
+    const bars = getCompareBars(compareIndex)
+    await swap(arr, maxIdx, 0, compareIndex)
+    let move = 0, j = 0, k = m - 1
+    while (move < n - 1) {
+        if (isCancelled) return
+        while (j > L[k] - 1) {
+            j++
+            k = Math.floor(c1 * (arr[j] - minVal))
+            if (isCancelled) return
+        }
+        let evicted = arr[j]
+        while (j !== L[k]) {
+            if (isCancelled) return
+            k = Math.floor(c1 * (evicted - minVal))
+            const idx = L[k] - 1
+            const temp = arr[idx]
+            arr[idx] = evicted
+            evicted = temp
+            L[k]--
+            move++
+            if (bars && bars[idx]) bars[idx].style.height = arr[idx] + "px"
+            await highlight([idx], 0.2, compareIndex)
+            await sleep(getDelay() * 0.15)
+        }
+    }
+    for (let i = 1; i < n; i++) {
+        if (isCancelled) return
+        const key = arr[i]
+        let j2 = i - 1
+        while (j2 >= 0 && arr[j2] > key) {
+            if (isCancelled) return
+            await highlight([j2, j2 + 1], 0.3, compareIndex)
+            arr[j2 + 1] = arr[j2]
+            if (bars && bars[j2 + 1]) bars[j2 + 1].style.height = arr[j2 + 1] + "px"
+            j2--
+            compareStats[compareIndex].swaps++
+            renderCompareStats(compareIndex)
+            await sleep(getDelay() * 0.25)
+        }
+        arr[j2 + 1] = key
+        if (bars && bars[j2 + 1]) bars[j2 + 1].style.height = key + "px"
+    }
+}
+
+async function bogoSortCompare(arr, compareIndex) {
+    const bars = getCompareBars(compareIndex)
+    let attempts = 0
+    while (!isSorted(arr)) {
+        if (isCancelled) return
+        shuffleInPlace(arr)
+        attempts++
+        compareStats[compareIndex].bogoShuffles++
+        renderCompareStats(compareIndex)
+        for (let i = 0; i < arr.length; i++) {
+            if (bars && bars[i]) bars[i].style.height = arr[i] + "px"
+        }
+        const idx = Math.floor(Math.random() * arr.length)
+        await highlight([idx], 0.2, compareIndex)
+        await sleep(getDelay())
+    }
+}
+
+async function startComparison() {
+    if (isSorting || isComparing) return
+    
+    const size = parseInt(compareSize.value, 10)
+    const type = compareType.value
+    const algo1 = compareAlgo1Select.value
+    const algo2 = compareAlgo2Select.value
+    const algo3 = compareAlgo3Select.value
+    
+    // Store selected algorithms
+    compareAlgos[0] = algo1
+    compareAlgos[1] = algo2
+    compareAlgos[2] = algo3
+    
+    // Check for bogo sort
+    if ((algo1 === "bogo" || algo2 === "bogo" || algo3 === "bogo") && size > 12) {
+        const proceed = window.confirm("Bogo Sort can take an extremely long time on large arrays. It is recommended to use size ≤ 10. Do you want to proceed?")
+        if (!proceed) return
+    }
+    
+    isComparing = true
+    isSorting = true
+    isCancelled = false
+    
+    // Close modal
+    compareModal.style.display = "none"
+    
+    // Show fullscreen comparison view
+    compareView.style.display = "flex"
+    
+    // Generate base array and copy for each algorithm
+    const baseArray = generateCompareArray(size, type)
+    compareArrays[0] = [...baseArray]
+    compareArrays[1] = [...baseArray]
+    compareArrays[2] = [...baseArray]
+    
+    // Draw bars for each
+    drawCompareBars(0, compareArrays[0])
+    drawCompareBars(1, compareArrays[1])
+    drawCompareBars(2, compareArrays[2])
+    
+    // Set algorithm labels
+    const info1 = algorithmInfo[algo1] || {}
+    const info2 = algorithmInfo[algo2] || {}
+    const info3 = algorithmInfo[algo3] || {}
+    
+    compareAlgo1Label.textContent = info1.name || "Algorithm 1"
+    compareAlgo2Label.textContent = info2.name || "Algorithm 2"
+    compareAlgo3Label.textContent = info3.name || "Algorithm 3"
+    
+    // Reset stats
+    resetCompareStats()
+    renderCompareStats(0)
+    renderCompareStats(1)
+    renderCompareStats(2)
+    
+    // Disable controls
+    btnStart.disabled = true
+    btnGenerate.disabled = true
+    btnReset.disabled = true
+    btnCompare.disabled = true
+    sizeSlider.disabled = true
+    typeSelect.disabled = true
+    algoSelect.disabled = true
+    btnStop.disabled = false
+    
+    setStatus("Running comparison...")
+    
+    // Run all 3 algorithms in parallel
+    try {
+        await Promise.all([
+            runCompareAlgorithm(algo1, compareArrays[0], 0),
+            runCompareAlgorithm(algo2, compareArrays[1], 1),
+            runCompareAlgorithm(algo3, compareArrays[2], 2)
+        ])
+        
+        if (isCancelled) {
+            setStatus("Comparison cancelled.")
+        } else {
+            setStatus("Comparison completed.")
+            markSorted()
+        }
+    } catch (e) {
+        setStatus("Error during comparison.")
+        console.error(e)
+    }
+    
+    isComparing = false
+    isSorting = false
+    isCancelled = false
+    btnStart.disabled = false
+    btnGenerate.disabled = false
+    btnReset.disabled = false
+    btnCompare.disabled = false
+    sizeSlider.disabled = false
+    typeSelect.disabled = false
+    algoSelect.disabled = false
+    btnStop.disabled = true
+}
+
+// Event Listeners for Compare feature
+if (btnCompare) {
+    btnCompare.addEventListener("click", () => {
+        if (isSorting || isComparing) return
+        if (compareModal) compareModal.style.display = "flex"
+        if (compareSizeValue && compareSize) compareSizeValue.textContent = compareSize.value
+    })
+}
+
+if (closeModal) {
+    closeModal.addEventListener("click", () => {
+        if (compareModal) compareModal.style.display = "none"
+    })
+}
+
+if (cancelCompare) {
+    cancelCompare.addEventListener("click", () => {
+        if (compareModal) compareModal.style.display = "none"
+    })
+}
+
+if (closeCompareView) {
+    closeCompareView.addEventListener("click", () => {
+        if (isSorting || isComparing) {
+            // Stop comparison if running
+            isCancelled = true
+            isComparing = false
+            isSorting = false
+        }
+        if (compareView) compareView.style.display = "none"
+        // Re-enable controls
+        if (btnStart) btnStart.disabled = false
+        if (btnGenerate) btnGenerate.disabled = false
+        if (btnReset) btnReset.disabled = false
+        if (btnCompare) btnCompare.disabled = false
+        if (sizeSlider) sizeSlider.disabled = false
+        if (typeSelect) typeSelect.disabled = false
+        if (algoSelect) algoSelect.disabled = false
+        if (btnStop) btnStop.disabled = true
+        setStatus("Comparison closed.")
+    })
+}
+
+if (startCompare) {
+    startCompare.addEventListener("click", () => {
+        startComparison()
+    })
+}
+
+if (compareSize && compareSizeValue) {
+    compareSize.addEventListener("input", () => {
+        compareSizeValue.textContent = compareSize.value
+    })
+}
+
+// Close modal on outside click
+if (compareModal) {
+    compareModal.addEventListener("click", (e) => {
+        if (e.target === compareModal) {
+            compareModal.style.display = "none"
+        }
+    })
+}
 
 document.addEventListener("DOMContentLoaded", init)

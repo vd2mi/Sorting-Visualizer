@@ -4,12 +4,30 @@
     <link rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-tomorrow.min.css">
 
-      <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-core.min.js" defer></script>
-      <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js" defer></script>
-      <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js" defer></script>
-      <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js" defer></script>
-      <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-cpp.min.js" defer></script>
-      <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-java.min.js" defer></script>
+      <script>
+        // Load Prism scripts in order to prevent dependency errors
+        (function() {
+          const scripts = [
+            'https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-core.min.js',
+            'https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js',
+            'https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js',
+            'https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js',
+            'https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-cpp.min.js',
+            'https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-java.min.js'
+          ];
+          let index = 0;
+          function loadNext() {
+            if (index < scripts.length) {
+              const script = document.createElement('script');
+              script.src = scripts[index++];
+              script.onload = loadNext;
+              script.onerror = function() { console.warn('Prism script failed to load:', script.src); loadNext(); };
+              document.head.appendChild(script);
+            }
+          }
+          loadNext();
+        })();
+      </script>
       
     <meta charset="UTF-8" />
     <title>Sorting Visualizer</title>
@@ -110,6 +128,10 @@
                     <button id="btn-reset" class="btn outline">Reset</button>
                 </div>
 
+                <div class="button-row" style="margin-top: 8px;">
+                    <button id="btn-compare" class="btn outline" style="flex: 1;">Compare</button>
+                </div>
+
                 <div class="info-block card-sub">
                     <h2 class="section-title">Stats</h2>
                     <div id="statsContent" class="info-content">
@@ -132,7 +154,7 @@
             <section class="panel panel-center card">
                 <div class="panel-header">
                     <div class="panel-title">
-                        <h2>Visualization</h2>
+                        <h2 id="visualizationTitle">Visualization</h2>
                         <span id="algoLabel" class="chip">Merge Sort • Average case</span>
                     </div>
                 </div>
@@ -181,6 +203,151 @@
 
     </div>
 
+    <!-- Full Screen Comparison View -->
+    <div id="compareView" class="compare-fullscreen" style="display: none;">
+        <div class="compare-fullscreen-header">
+            <h2>Algorithm Comparison</h2>
+            <button id="closeCompareView" class="btn danger">Close</button>
+        </div>
+        <div class="compare-fullscreen-content">
+            <div class="compare-panel-full">
+                <div class="compare-header-full">
+                    <h3 id="compareAlgo1">Algorithm 1</h3>
+                    <div id="compareStats1" class="compare-stats-full"></div>
+                </div>
+                <div id="compareBars1" class="bars-container compare-bars-full"></div>
+            </div>
+            <div class="compare-panel-full">
+                <div class="compare-header-full">
+                    <h3 id="compareAlgo2">Algorithm 2</h3>
+                    <div id="compareStats2" class="compare-stats-full"></div>
+                </div>
+                <div id="compareBars2" class="bars-container compare-bars-full"></div>
+            </div>
+            <div class="compare-panel-full">
+                <div class="compare-header-full">
+                    <h3 id="compareAlgo3">Algorithm 3</h3>
+                    <div id="compareStats3" class="compare-stats-full"></div>
+                </div>
+                <div id="compareBars3" class="bars-container compare-bars-full"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compare Modal -->
+    <div id="compareModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Compare Algorithms</h2>
+                <button id="closeModal" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="compare-controls">
+                    <div class="control-group">
+                        <label for="compareSize">Array Size</label>
+                        <input type="range" id="compareSize" min="5" max="200" value="60" />
+                        <div class="value-row">
+                            <span id="compareSizeValue">60</span>
+                            <span class="value-hint">elements</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label for="compareType">Input Pattern</label>
+                        <select id="compareType">
+                            <option value="best">Best case (sorted)</option>
+                            <option value="avg" selected>Average case (random)</option>
+                            <option value="worst">Worst case (reversed)</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="compareAlgo1Select">Algorithm 1</label>
+                        <select id="compareAlgo1Select">
+                            <optgroup label="Comparison-based">
+                                <option value="merge" selected>Merge Sort</option>
+                                <option value="quick">Quick Sort</option>
+                                <option value="heap">Heap Sort</option>
+                                <option value="tim">Timsort</option>
+                                <option value="bubble">Bubble Sort</option>
+                                <option value="insertion">Insertion Sort</option>
+                                <option value="selection">Selection Sort</option>
+                                <option value="cocktail">Cocktail Sort</option>
+                                <option value="shell">Shell Sort</option>
+                            </optgroup>
+                            <optgroup label="Non-comparison">
+                                <option value="counting">Counting Sort</option>
+                                <option value="radix">Radix Sort</option>
+                                <option value="bucket">Bucket Sort</option>
+                                <option value="pigeonhole">Pigeonhole Sort</option>
+                                <option value="flash">Flash Sort</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="compareAlgo2Select">Algorithm 2</label>
+                        <select id="compareAlgo2Select">
+                            <optgroup label="Comparison-based">
+                                <option value="merge">Merge Sort</option>
+                                <option value="quick" selected>Quick Sort</option>
+                                <option value="heap">Heap Sort</option>
+                                <option value="tim">Timsort</option>
+                                <option value="bubble">Bubble Sort</option>
+                                <option value="insertion">Insertion Sort</option>
+                                <option value="selection">Selection Sort</option>
+                                <option value="cocktail">Cocktail Sort</option>
+                                <option value="shell">Shell Sort</option>
+                            </optgroup>
+                            <optgroup label="Non-comparison">
+                                <option value="counting">Counting Sort</option>
+                                <option value="radix">Radix Sort</option>
+                                <option value="bucket">Bucket Sort</option>
+                                <option value="pigeonhole">Pigeonhole Sort</option>
+                                <option value="flash">Flash Sort</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="compareAlgo3Select">Algorithm 3</label>
+                        <select id="compareAlgo3Select">
+                            <optgroup label="Comparison-based">
+                                <option value="merge">Merge Sort</option>
+                                <option value="quick">Quick Sort</option>
+                                <option value="heap" selected>Heap Sort</option>
+                                <option value="tim">Timsort</option>
+                                <option value="bubble">Bubble Sort</option>
+                                <option value="insertion">Insertion Sort</option>
+                                <option value="selection">Selection Sort</option>
+                                <option value="cocktail">Cocktail Sort</option>
+                                <option value="shell">Shell Sort</option>
+                            </optgroup>
+                            <optgroup label="Non-comparison">
+                                <option value="counting">Counting Sort</option>
+                                <option value="radix">Radix Sort</option>
+                                <option value="bucket">Bucket Sort</option>
+                                <option value="pigeonhole">Pigeonhole Sort</option>
+                                <option value="flash">Flash Sort</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button id="startCompare" class="btn primary">Start Comparison</button>
+                    <button id="cancelCompare" class="btn outline">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js" defer></script>
+    
+    <!-- Suppress Prism loading errors (harmless - Prism will work once all scripts load) -->
+    <script>
+        window.addEventListener('error', function(e) {
+            // Suppress Prism internal loading errors
+            if (e.filename && e.filename.includes('prism') && e.message && e.message.includes('class-name')) {
+                e.preventDefault();
+                return true;
+            }
+        }, true);
+    </script>
 </body>
 </html>
