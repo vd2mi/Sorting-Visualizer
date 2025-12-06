@@ -1836,9 +1836,9 @@ function getDelay() {
 
 function updateSpeedLabel() {
     const v = parseInt(speedSlider.value, 10)
-    if (v < 25) speedLabel.textContent = "Fast"
+    if (v < 25) speedLabel.textContent = "Slow"
     else if (v < 55) speedLabel.textContent = "Medium"
-    else speedLabel.textContent = "Slow"
+    else speedLabel.textContent = "Fast"
 }
 
 function getBars() {
